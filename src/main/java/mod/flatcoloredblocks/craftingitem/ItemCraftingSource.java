@@ -11,9 +11,7 @@ class ItemCraftingSource {
     boolean simulate = false;
     private int used = 0;
 
-    public ItemCraftingSource(
-            final PlayerInventory ip,
-            final int x) {
+    public ItemCraftingSource(final PlayerInventory ip, final int x) {
         inv = ip;
         slot = x;
     }
@@ -24,14 +22,12 @@ class ItemCraftingSource {
     }
 
     @Override
-    public boolean equals(
-            final Object obj) {
+    public boolean equals(final Object obj) {
         final ItemCraftingSource s = (ItemCraftingSource) obj;
         return inv == s.inv && slot == s.slot;
     }
 
-    public void consume(
-            final int i) {
+    public void consume(final int i) {
         if (simulate) {
             ++used;
         } else {
@@ -51,5 +47,4 @@ class ItemCraftingSource {
 
         return inv.getStackInSlot(slot);
     }
-
 }

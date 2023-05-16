@@ -3,7 +3,6 @@ package mod.flatcoloredblocks.craftingitem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Slot;
 
-
 public class SlotChangeDetect extends Slot {
 
     InventoryColoredBlockCrafter secondInv;
@@ -23,5 +22,4 @@ public class SlotChangeDetect extends Slot {
 
         secondInv.updateContents();
     }
-
 }

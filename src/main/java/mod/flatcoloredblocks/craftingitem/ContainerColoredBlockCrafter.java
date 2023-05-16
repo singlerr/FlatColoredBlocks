@@ -25,11 +25,7 @@ public class ContainerColoredBlockCrafter extends Container {
     float originalScroll = 0;
 
     public ContainerColoredBlockCrafter(
-            final PlayerEntity player,
-            final World world,
-            final int x,
-            final int y,
-            final int z) {
+            final PlayerEntity player, final World world, final int x, final int y, final int z) {
         super(ContainerType.CRAFTING, 0);
         thePlayer = player;
         craftinginv = new InventoryColoredBlockCrafter(thePlayer, this);
@@ -46,7 +42,8 @@ public class ContainerColoredBlockCrafter extends Container {
 
         for (int l = 0; l < 3; ++l) {
             for (int j1 = 0; j1 < 9; ++j1) {
-                addSlot(new SlotChangeDetect(playerInventory, craftinginv, j1 + l * 9 + 9, 8 + j1 * 18, 104 + l * 18 + i));
+                addSlot(new SlotChangeDetect(
+                        playerInventory, craftinginv, j1 + l * 9 + 9, 8 + j1 * 18, 104 + l * 18 + i));
             }
         }
 
@@ -61,15 +58,12 @@ public class ContainerColoredBlockCrafter extends Container {
     }
 
     @Override
-    public boolean canInteractWith(
-            final PlayerEntity playerIn) {
+    public boolean canInteractWith(final PlayerEntity playerIn) {
         return true;
     }
 
     @Override
-    public ItemStack transferStackInSlot(
-            final PlayerEntity playerIn,
-            final int index) {
+    public ItemStack transferStackInSlot(final PlayerEntity playerIn, final int index) {
         int emptySlots = 0;
 
         for (final Slot s : inventorySlots) {
@@ -93,8 +87,7 @@ public class ContainerColoredBlockCrafter extends Container {
         return ModUtil.getEmptyStack();
     }
 
-    public void setScroll(
-            final float currentScroll) {
+    public void setScroll(final float currentScroll) {
         scrollPercent = currentScroll;
 
         final int rowsOfScrolling = Math.max((craftinginv.getSizeInventory() + 8) / 9 - 7, 0);
@@ -114,5 +107,4 @@ public class ContainerColoredBlockCrafter extends Container {
     public int getItemCount() {
         return craftinginv.getSizeInventory();
     }
-
 }

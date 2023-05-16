@@ -1,5 +1,7 @@
 package mod.flatcoloredblocks.gui;
 
+import java.lang.reflect.Constructor;
+import javax.annotation.Nullable;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.craftingitem.ContainerColoredBlockCrafter;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,15 +14,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
-import javax.annotation.Nullable;
-import java.lang.reflect.Constructor;
-
 /**
  * Registry of Guis
  */
 @SuppressWarnings("unused")
 public enum ModGuiTypes {
-
     colored_crafter(ContainerColoredBlockCrafter.class);
 
     public final Constructor<?> container_construtor;
@@ -31,7 +29,8 @@ public enum ModGuiTypes {
     ModGuiTypes(final Class<? extends Container> c) {
         try {
             container = c;
-            container_construtor = container.getConstructor(PlayerEntity.class, World.class, int.class, int.class, int.class);
+            container_construtor =
+                    container.getConstructor(PlayerEntity.class, World.class, int.class, int.class, int.class);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
@@ -50,12 +49,10 @@ public enum ModGuiTypes {
             if (FMLEnvironment.dist == Dist.CLIENT) {
                 throw new RuntimeException(e);
             }
-
         }
 
         gui = g;
         gui_construtor = g_construtor;
-
     }
 
     public ResourceLocation getID() {
@@ -69,7 +66,8 @@ public enum ModGuiTypes {
 
             @Nullable
             @Override
-            public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
+            public Container createMenu(
+                    int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
                 return ModGuiRouter.createContainer(ModGuiTypes.colored_crafter, player, worldIn, 0, 0, 0);
             }
 
@@ -77,8 +75,6 @@ public enum ModGuiTypes {
             public ITextComponent getDisplayName() {
                 return null;
             }
-
-
         };
     }
 }

@@ -45,8 +45,7 @@ public class NetworkRouter {
         ec.addListener(this::serverPacket);
     }
 
-    public void clientPacket(
-            final NetworkEvent.ServerCustomPayloadEvent ev) {
+    public void clientPacket(final NetworkEvent.ServerCustomPayloadEvent ev) {
         try {
             if (clientPacketHandler != null) {
                 clientPacketHandler.onPacketData(ev.getPayload());
@@ -55,8 +54,7 @@ public class NetworkRouter {
         }
     }
 
-    public void serverPacket(
-            final NetworkEvent.ClientCustomPayloadEvent ev) {
+    public void serverPacket(final NetworkEvent.ClientCustomPayloadEvent ev) {
         // find player
         NetworkEvent.Context context = ev.getSource().get();
 
@@ -68,8 +66,7 @@ public class NetworkRouter {
         }
     }
 
-    private ModPacket parsePacket(
-            final PacketBuffer buffer) {
+    private ModPacket parsePacket(final PacketBuffer buffer) {
         final int id = buffer.readByte();
 
         try {
@@ -84,8 +81,7 @@ public class NetworkRouter {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void sendToServer(
-            ModPacket packet) {
+    public void sendToServer(ModPacket packet) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft != null) {
             ClientPlayNetHandler netHandler = minecraft.getConnection();
@@ -102,9 +98,7 @@ public class NetworkRouter {
         }
     }
 
-    public void sendPacketToClient(
-            ModPacket packet,
-            ServerPlayerEntity player) {
+    public void sendPacketToClient(ModPacket packet, ServerPlayerEntity player) {
         if (player != null && player.connection != null) {
             int id = ModPacketTypes.getID(packet.getClass());
             PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
@@ -122,8 +116,7 @@ public class NetworkRouter {
      */
     private class ClientPacketHandler {
 
-        public void onPacketData(
-                final PacketBuffer buffer) {
+        public void onPacketData(final PacketBuffer buffer) {
             final ModPacket innerPacket = parsePacket(buffer);
 
             Minecraft.getInstance().enqueue(new Runnable() {
@@ -134,7 +127,6 @@ public class NetworkRouter {
                 }
             });
         }
-
     }
 
     /**
@@ -142,9 +134,7 @@ public class NetworkRouter {
      */
     private class ServerPacketHandler {
 
-        public void onPacketData(
-                final PacketBuffer buffer,
-                final ServerPlayerEntity playerEntity) {
+        public void onPacketData(final PacketBuffer buffer, final ServerPlayerEntity playerEntity) {
             if (playerEntity == null) {
                 return;
             }

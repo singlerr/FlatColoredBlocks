@@ -7,10 +7,9 @@ public enum EnumFlatBlockType {
     TRANSPARENT("flatcoloredblock_transparent"),
     GLOWING("flatcoloredblock_glowing");
 
-    final public String blockName;
+    public final String blockName;
 
-    EnumFlatBlockType(
-            final String name) {
+    EnumFlatBlockType(final String name) {
         blockName = name;
     }
 
@@ -28,5 +27,4 @@ public enum EnumFlatBlockType {
 
         return 1;
     }
-
 }

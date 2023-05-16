@@ -19,40 +19,42 @@ import org.lwjgl.opengl.GL11;
  */
 public class GuiColoredBlockCrafter extends ContainerScreen {
 
-    private static final ResourceLocation CRAFTER_GUI_TEXTURE = new ResourceLocation(FlatColoredBlocks.MODID, "textures/gui/container/coloredcrafting.png");
+    private static final ResourceLocation CRAFTER_GUI_TEXTURE =
+            new ResourceLocation(FlatColoredBlocks.MODID, "textures/gui/container/coloredcrafting.png");
 
     private final ContainerColoredBlockCrafter myContainer;
     private boolean isScrolling = false;
     private float currentScroll = 0;
 
-    public GuiColoredBlockCrafter(
-            final PlayerEntity player,
-            final World world,
-            final int x,
-            final int y,
-            final int z) {
+    public GuiColoredBlockCrafter(final PlayerEntity player, final World world, final int x, final int y, final int z) {
 
-        super(new ContainerColoredBlockCrafter(player, world, x, y, z), player.inventory, new StringTextComponent("colored_crafter"));
+        super(
+                new ContainerColoredBlockCrafter(player, world, x, y, z),
+                player.inventory,
+                new StringTextComponent("colored_crafter"));
         myContainer = (ContainerColoredBlockCrafter) getContainer();
         ySize = 239;
         xSize = 195;
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack stack,
-                                                   final int mouseX,
-                                                   final int mouseY) {
+    protected void drawGuiContainerForegroundLayer(MatrixStack stack, final int mouseX, final int mouseY) {
 
-        font.drawString(stack, FlatColoredBlocks.instance.itemColoredBlockCrafting.getDisplayName(null).getUnformattedComponentText(), 8, 6, 0x404040);
+        font.drawString(
+                stack,
+                FlatColoredBlocks.instance
+                        .itemColoredBlockCrafting
+                        .getDisplayName(null)
+                        .getUnformattedComponentText(),
+                8,
+                6,
+                0x404040);
         font.drawString(stack, I18n.format("container.inventory"), 8, ySize - 93, 0x404040);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(
-            MatrixStack stack,
-            final float partialTicks,
-            final int mouseX,
-            final int mouseY) {
+            MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY) {
 
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         minecraft.getTextureManager().bindTexture(CRAFTER_GUI_TEXTURE);
@@ -77,15 +79,18 @@ public class GuiColoredBlockCrafter extends ContainerScreen {
             myContainer.setScroll(currentScroll = 0);
         }
 
-        GuiUtils.drawTexturedModalRect(scrollBarLeft, scrollBarTop + (int) ((scrollBarBottom - scrollBarTop - 17) * currentScroll), scrollNobOffsetX + (rowsOfScrolling > 0 ? 0 : 12),
-                scrollNobOffsetY, 12, 15, 1f);
+        GuiUtils.drawTexturedModalRect(
+                scrollBarLeft,
+                scrollBarTop + (int) ((scrollBarBottom - scrollBarTop - 17) * currentScroll),
+                scrollNobOffsetX + (rowsOfScrolling > 0 ? 0 : 12),
+                scrollNobOffsetY,
+                12,
+                15,
+                1f);
     }
 
     @Override
-    public boolean mouseScrolled(
-            double x,
-            double y,
-            double mouseWheelChange) {
+    public boolean mouseScrolled(double x, double y, double mouseWheelChange) {
         if (mouseWheelChange != 0) {
 
             final int rowsToScroll = myContainer.getItemCount() / 9 - 7;
@@ -105,21 +110,19 @@ public class GuiColoredBlockCrafter extends ContainerScreen {
         return false;
     }
 
-    protected boolean func_195376_a(
-            double x,
-            double y) {
+    protected boolean func_195376_a(double x, double y) {
         final int scrollBarLeft = guiLeft + 175;
         final int scrollBarTop = guiTop + 18;
         final int scrollBarRight = scrollBarLeft + 14;
         final int scrollBarBottom = scrollBarTop + 112 + 14;
 
-        return x >= (double) scrollBarLeft && y >= (double) scrollBarTop && x < (double) scrollBarRight && y < (double) scrollBarBottom;
+        return x >= (double) scrollBarLeft
+                && y >= (double) scrollBarTop
+                && x < (double) scrollBarRight
+                && y < (double) scrollBarBottom;
     }
 
-    public boolean mouseClicked(
-            double x,
-            double y,
-            int button) {
+    public boolean mouseClicked(double x, double y, int button) {
         if (button == 0 && this.func_195376_a(x, y)) {
             this.isScrolling = true;
             return true;
@@ -128,10 +131,7 @@ public class GuiColoredBlockCrafter extends ContainerScreen {
         return super.mouseClicked(x, y, button);
     }
 
-    public boolean mouseReleased(
-            double x,
-            double y,
-            int button) {
+    public boolean mouseReleased(double x, double y, int button) {
         if (button == 0) {
             this.isScrolling = false;
         }
@@ -139,12 +139,7 @@ public class GuiColoredBlockCrafter extends ContainerScreen {
         return super.mouseReleased(x, y, button);
     }
 
-    public boolean mouseDragged(
-            double x,
-            double y,
-            int button,
-            double sx,
-            double sy) {
+    public boolean mouseDragged(double x, double y, int button, double sx, double sy) {
         if (this.isScrolling) {
             final int scrollBarTop = guiTop + 18;
             final int scrollBarBottom = scrollBarTop + 112 + 14;
@@ -158,15 +153,10 @@ public class GuiColoredBlockCrafter extends ContainerScreen {
     }
 
     @Override
-    public void render(
-            MatrixStack stack,
-            int mouseX,
-            int mouseY,
-            float partialTicks) {
+    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
 
         //  this.drawDefaultBackground();
         super.render(stack, mouseX, mouseY, partialTicks);
         renderHoveredTooltip(stack, mouseX, mouseY);
     }
-
 }

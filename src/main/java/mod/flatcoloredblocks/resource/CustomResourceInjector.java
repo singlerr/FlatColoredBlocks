@@ -1,5 +1,6 @@
 package mod.flatcoloredblocks.resource;
 
+import java.util.function.Predicate;
 import mod.flatcoloredblocks.client.ClientSide;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.SimpleReloadableResourceManager;
@@ -7,29 +8,19 @@ import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 import net.minecraftforge.resource.VanillaResourceType;
 
-import java.util.function.Predicate;
-
 public class CustomResourceInjector implements ISelectiveResourceReloadListener {
     public static final CustomFileProvider generatedFiles = new CustomFileProvider();
 
-    public static void addResource(
-            String folder,
-            String resourceName,
-            String ext,
-            byte[] data) {
+    public static void addResource(String folder, String resourceName, String ext, byte[] data) {
         generatedFiles.fakeFiles.put(folder + "/" + resourceName + ext, data);
     }
 
-    public static void addResource(
-            String path,
-            byte[] data) {
+    public static void addResource(String path, byte[] data) {
         generatedFiles.fakeFiles.put(path, data);
     }
 
     @Override
-    public void onResourceManagerReload(
-            IResourceManager resourceManager,
-            Predicate<IResourceType> resourcePredicate) {
+    public void onResourceManagerReload(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate) {
         if (resourcePredicate.test(VanillaResourceType.MODELS)) {
             if (resourceManager instanceof SimpleReloadableResourceManager) {
                 ((SimpleReloadableResourceManager) resourceManager).addResourcePack(generatedFiles);
@@ -37,5 +28,4 @@ public class CustomResourceInjector implements ISelectiveResourceReloadListener 
             }
         }
     }
-
 }

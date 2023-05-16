@@ -10,7 +10,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(targets = "net.minecraft.tags.TagRegistry$NamedTag")
 public abstract class TagRegistryMixin<T> {
 
-
     @Shadow
     protected abstract ITag<T> getTag();
 

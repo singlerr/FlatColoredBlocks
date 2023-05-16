@@ -1,8 +1,7 @@
 package mod.flatcoloredblocks.network;
 
-import mod.flatcoloredblocks.network.packets.ScrolingGuiPacket;
-
 import java.util.HashMap;
+import mod.flatcoloredblocks.network.packets.ScrolingGuiPacket;
 
 /**
  * Registry of Packets that can be sent and recieved.
@@ -10,12 +9,13 @@ import java.util.HashMap;
 public enum ModPacketTypes {
     ADJUST_SCROLL(ScrolingGuiPacket.class);
 
-    private static final HashMap<Class<? extends ModPacket>, Integer> fromClassToId = new HashMap<Class<? extends ModPacket>, Integer>();
-    private static final HashMap<Integer, Class<? extends ModPacket>> fromIdToClass = new HashMap<Integer, Class<? extends ModPacket>>();
+    private static final HashMap<Class<? extends ModPacket>, Integer> fromClassToId =
+            new HashMap<Class<? extends ModPacket>, Integer>();
+    private static final HashMap<Integer, Class<? extends ModPacket>> fromIdToClass =
+            new HashMap<Integer, Class<? extends ModPacket>>();
     private final Class<? extends ModPacket> packetClass;
 
-    ModPacketTypes(
-            final Class<? extends ModPacket> clz) {
+    ModPacketTypes(final Class<? extends ModPacket> clz) {
         packetClass = clz;
     }
 
@@ -26,14 +26,11 @@ public enum ModPacketTypes {
         }
     }
 
-    public static int getID(
-            final Class<? extends ModPacket> clz) {
+    public static int getID(final Class<? extends ModPacket> clz) {
         return fromClassToId.get(clz);
     }
 
-    public static ModPacket constructByID(
-            final int id) throws InstantiationException, IllegalAccessException {
+    public static ModPacket constructByID(final int id) throws InstantiationException, IllegalAccessException {
         return fromIdToClass.get(id).newInstance();
     }
-
 }

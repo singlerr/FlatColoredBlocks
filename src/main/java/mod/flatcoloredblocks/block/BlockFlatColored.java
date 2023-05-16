@@ -1,5 +1,6 @@
 package mod.flatcoloredblocks.block;
 
+import java.util.*;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -18,8 +19,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 
-import java.util.*;
-
 public class BlockFlatColored extends Block {
 
     private static final ArrayList<BlockFlatColored> coloredBlocks = new ArrayList<BlockFlatColored>();
@@ -36,13 +35,13 @@ public class BlockFlatColored extends Block {
     private IntegerProperty shade; // block state configuration for block.
 
     protected BlockFlatColored(
-            BlockHSVConfiguration type,
-            final float lightValue,
-            final float opacity,
-            final int varientNum) {
+            BlockHSVConfiguration type, final float lightValue, final float opacity, final int varientNum) {
         super(Block.Properties.create(opacity > 0.001 ? Material.GLASS : Material.ROCK)
                 .hardnessAndResistance(1.5F, 10.0F)
-                .setLightLevel((state) -> (int) (FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT ? Math.max(0, Math.min(15, 15.0f * (lightValue / 255.0f))) : 0))
+                .setLightLevel((state) -> (int)
+                        (FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT
+                                ? Math.max(0, Math.min(15, 15.0f * (lightValue / 255.0f)))
+                                : 0))
                 .sound(opacity > 0.001 ? SoundType.GLASS : SoundType.STONE));
 
         final String regName = type.getBlockName(varientNum);
@@ -60,14 +59,14 @@ public class BlockFlatColored extends Block {
 
         coloredBlocks.add(this);
         BlockState state = getDefaultState();
-        this.lightValue = (int) (FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT ? Math.max(0, Math.min(15, 15.0f * (lightValue / 255.0f))) : 0);
+        this.lightValue = (int)
+                (FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT
+                        ? Math.max(0, Math.min(15, 15.0f * (lightValue / 255.0f)))
+                        : 0);
         this.opacity = 100 - Math.round(opacity * 100 / 255);
-
     }
 
-    public static BlockFlatColored construct(
-            final BlockHSVConfiguration type,
-            final int varientNum) {
+    public static BlockFlatColored construct(final BlockHSVConfiguration type, final int varientNum) {
         // pass these to createBlockState
         newConfig = type;
 
@@ -85,28 +84,23 @@ public class BlockFlatColored extends Block {
     }
 
     // generates a list of all shades without caring about which block it is.
-    public static void getAllShades(
-            final List<ItemStack> list) {
+    public static void getAllShades(final List<ItemStack> list) {
         for (final BlockFlatColored cb : coloredBlocks) {
             cb.outputShades(list, cb.getCraftCount());
         }
     }
 
-    static public List<BlockFlatColored> getAllBlocks() {
+    public static List<BlockFlatColored> getAllBlocks() {
         return coloredBlocks;
     }
 
     @Override
-    public BlockState getStateForPlacement(
-            BlockItemUseContext context) {
-        return super.getStateForPlacement(context).with(shade, context.getItem().getOrCreateTag().getInt("Shade"));
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+        return super.getStateForPlacement(context)
+                .with(shade, context.getItem().getOrCreateTag().getInt("Shade"));
     }
 
-
-    public MaterialColor getMapColor(
-            BlockState state,
-            IBlockReader world,
-            BlockPos pos) {
+    public MaterialColor getMapColor(BlockState state, IBlockReader world, BlockPos pos) {
         for (final EnumFlatColorAttributes attr : getFlatColorAttributes(state)) {
             if (!attr.isModifier) {
                 return attr.mapColor;
@@ -122,14 +116,12 @@ public class BlockFlatColored extends Block {
     }
 
     // also used in item for item stack color.
-    public int colorFromState(
-            final BlockState state) {
+    public int colorFromState(final BlockState state) {
         final int fullAlpha = 0xff << 24;
         return ConversionHSV2RGB.toRGB(hsvFromState(state)) | fullAlpha;
     }
 
-    public int getShadeNumber(
-            final BlockState state) {
+    public int getShadeNumber(final BlockState state) {
         if (state.getBlock() instanceof BlockFlatColored) {
             final BlockFlatColored cb = (BlockFlatColored) state.getBlock();
             return state.get(cb.shade) + cb.shadeOffset;
@@ -138,9 +130,7 @@ public class BlockFlatColored extends Block {
         return 0;
     }
 
-
-    public int hsvFromState(
-            final BlockState state) {
+    public int hsvFromState(final BlockState state) {
         if (state == null) {
             return 0x000000;
         }
@@ -160,8 +150,7 @@ public class BlockFlatColored extends Block {
         return shade;
     }
 
-    protected void fillStateContainer(
-            StateContainer.Builder<Block, BlockState> builder) {
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         shadeOffset = offset;
         configuration = newConfig;
         maxShade = shadeOffset + configuration.MAX_SHADES_MINUS_ONE;
@@ -175,21 +164,15 @@ public class BlockFlatColored extends Block {
         return Collections.singletonList(getItem(null, null, state));
     }
 
-
     @Override
-    public ItemStack getItem(
-            IBlockReader world,
-            BlockPos pos,
-            BlockState state) {
+    public ItemStack getItem(IBlockReader world, BlockPos pos, BlockState state) {
         ItemStack is = new ItemStack(this);
         is.getOrCreateTag().putInt("Shade", state.get(shade));
         return is;
     }
 
     // convert block into all possible ItemStacks.
-    private void outputShades(
-            final List<ItemStack> list,
-            final int qty) {
+    private void outputShades(final List<ItemStack> list, final int qty) {
         final Item item = Item.getItemFromBlock(this);
 
         for (int x = shadeOffset; x <= maxShade; ++x) {
@@ -200,9 +183,7 @@ public class BlockFlatColored extends Block {
     }
 
     @Override
-    public void fillItemGroup(
-            ItemGroup group,
-            NonNullList<ItemStack> items) {
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
         for (int x = shadeOffset; x <= maxShade; ++x) {
             ItemStack is = new ItemStack(this, 1);
             is.getOrCreateTag().putInt("Shade", x - shadeOffset);
@@ -210,8 +191,7 @@ public class BlockFlatColored extends Block {
         }
     }
 
-    public BlockState getstateForStack(
-            ItemStack stack) {
+    public BlockState getstateForStack(ItemStack stack) {
         return getDefaultState().with(shade, stack.getOrCreateTag().getInt("Shade"));
     }
 
@@ -232,8 +212,7 @@ public class BlockFlatColored extends Block {
     }
 
     // get details about a shade.
-    public Set<EnumFlatColorAttributes> getFlatColorAttributes(
-            final BlockState state) {
+    public Set<EnumFlatColorAttributes> getFlatColorAttributes(final BlockState state) {
         final int out = hsvFromState(state);
 
         final Set<EnumFlatColorAttributes> result = EnumSet.noneOf(EnumFlatColorAttributes.class);
@@ -300,5 +279,4 @@ public class BlockFlatColored extends Block {
     public EnumFlatBlockType getCraftable() {
         return configuration.type;
     }
-
 }

@@ -1,14 +1,13 @@
 package mod.flatcoloredblocks.config;
 
-import net.minecraftforge.common.MinecraftForge;
-
 import java.io.File;
+import net.minecraftforge.common.MinecraftForge;
 
 // TODO: Loading, Managing and Saving Values
 public class ModConfig {
 
     // file path...
-    final private File myPath;
+    private final File myPath;
 
     // not configured..
     public int LAST_MAX_SHADES;
@@ -196,8 +195,7 @@ public class ModConfig {
     @Configured(category = "Client Settings")
     public boolean showOpacity;
 
-    public ModConfig(
-            final File path) {
+    public ModConfig(final File path) {
         myPath = path;
 
         MinecraftForge.EVENT_BUS.register(this);
@@ -302,5 +300,4 @@ public class ModConfig {
         // TODO Auto-generated method stub
 
     }
-
 }

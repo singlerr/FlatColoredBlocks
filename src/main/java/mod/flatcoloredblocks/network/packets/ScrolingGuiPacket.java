@@ -14,8 +14,7 @@ public class ScrolingGuiPacket extends ModPacket {
     public float scroll = 0;
 
     @Override
-    public void server(
-            final ServerPlayerEntity player) {
+    public void server(final ServerPlayerEntity player) {
         final Container c = player.openContainer;
         if (c instanceof ContainerColoredBlockCrafter) {
             final ContainerColoredBlockCrafter ccc = (ContainerColoredBlockCrafter) c;
@@ -24,16 +23,13 @@ public class ScrolingGuiPacket extends ModPacket {
     }
 
     @Override
-    public void getPayload(
-            final PacketBuffer buffer) {
+    public void getPayload(final PacketBuffer buffer) {
         buffer.writeFloat(scroll);
     }
 
     @Override
-    public void readPayload(
-            final PacketBuffer buffer) {
+    public void readPayload(final PacketBuffer buffer) {
         // no data..
         scroll = buffer.readFloat();
     }
-
 }

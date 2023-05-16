@@ -1,5 +1,7 @@
 package mod.flatcoloredblocks.craftingitem;
 
+import java.util.*;
+import java.util.Map.Entry;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.ModUtil;
 import mod.flatcoloredblocks.block.BlockFlatColored;
@@ -18,9 +20,6 @@ import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
 
-import java.util.*;
-import java.util.Map.Entry;
-
 /**
  * Generates and Crafts items that are seen in the crafting item's gui.
  */
@@ -33,8 +32,7 @@ public class InventoryColoredBlockCrafter implements IInventory {
     public int offset = 0;
 
     public InventoryColoredBlockCrafter(
-            final PlayerEntity thePlayer,
-            final ContainerColoredBlockCrafter coloredCrafterContainer) {
+            final PlayerEntity thePlayer, final ContainerColoredBlockCrafter coloredCrafterContainer) {
         this.thePlayer = thePlayer;
         craftingContainer = coloredCrafterContainer;
     }
@@ -59,29 +57,26 @@ public class InventoryColoredBlockCrafter implements IInventory {
         tagIntoList(dyeList, DyeColor.ORANGE, Tags.Items.DYES_ORANGE);
         tagIntoList(dyeList, DyeColor.WHITE, Tags.Items.DYES_WHITE);
         tagIntoList(dyeList, EnumFlatBlockType.NORMAL, getItems(FlatColoredBlocks.instance.config.solidCraftingBlock));
-        tagIntoList(dyeList, EnumFlatBlockType.GLOWING, getItems(FlatColoredBlocks.instance.config.glowingCraftingBlock));
-        tagIntoList(dyeList, EnumFlatBlockType.TRANSPARENT, getItems(FlatColoredBlocks.instance.config.transparentCraftingBlock));
+        tagIntoList(
+                dyeList, EnumFlatBlockType.GLOWING, getItems(FlatColoredBlocks.instance.config.glowingCraftingBlock));
+        tagIntoList(
+                dyeList,
+                EnumFlatBlockType.TRANSPARENT,
+                getItems(FlatColoredBlocks.instance.config.transparentCraftingBlock));
 
         return dyeList;
     }
 
-    private static void tagIntoList(
-            HashMap<Object, Collection<Item>> dyeList,
-            Enum<?> e,
-            Tag<Item> itemList) {
+    private static void tagIntoList(HashMap<Object, Collection<Item>> dyeList, Enum<?> e, Tag<Item> itemList) {
         dyeList.put(e, itemList.getAllElements());
     }
 
     private static void tagIntoList(
-            HashMap<Object, Collection<Item>> dyeList,
-            Enum<?> e,
-            Tags.IOptionalNamedTag<Item> itemList) {
+            HashMap<Object, Collection<Item>> dyeList, Enum<?> e, Tags.IOptionalNamedTag<Item> itemList) {
         dyeList.put(e, itemList.getAllElements());
-
     }
 
-    private static Tag<Item> getItems(
-            final String name) {
+    private static Tag<Item> getItems(final String name) {
 
         return (Tag<Item>) ItemTags.createOptional(new ResourceLocation(name));
     }
@@ -177,26 +172,25 @@ public class InventoryColoredBlockCrafter implements IInventory {
     }
 
     /*
-    @Override
-    public boolean hasCustomName()
-    {
-        return false;
-    }
+    	@Override
+    	public boolean hasCustomName()
+    	{
+    		return false;
+    	}
 
-    @Override
-    public ITextComponent getDisplayName()
-    {
-        return null;
-    }
-*/
+    	@Override
+    	public ITextComponent getDisplayName()
+    	{
+    		return null;
+    	}
+    */
     @Override
     public int getSizeInventory() {
         return options.size();
     }
 
     @Override
-    public ItemStack getStackInSlot(
-            int index) {
+    public ItemStack getStackInSlot(int index) {
 
         index += offset;
         if (index < options.size()) {
@@ -207,9 +201,7 @@ public class InventoryColoredBlockCrafter implements IInventory {
     }
 
     @Override
-    public ItemStack decrStackSize(
-            int index,
-            final int count) {
+    public ItemStack decrStackSize(int index, final int count) {
 
         index += offset;
         if (index < options.size()) {
@@ -225,10 +217,7 @@ public class InventoryColoredBlockCrafter implements IInventory {
         return ModUtil.getEmptyStack();
     }
 
-    public ItemStack craftItem(
-            final ItemStack reqItem,
-            final int count,
-            final boolean simulate) {
+    public ItemStack craftItem(final ItemStack reqItem, final int count, final boolean simulate) {
         if (ModUtil.isEmpty(reqItem)) {
             return ModUtil.getEmptyStack();
         }
@@ -243,7 +232,8 @@ public class InventoryColoredBlockCrafter implements IInventory {
         final Object Craftable = ((BlockFlatColored) blk).getCraftable();
         final HashSet<DyeColor> requiredDyes = new HashSet<DyeColor>();
 
-        final int craftAmount = Craftable instanceof EnumFlatBlockType ? ((EnumFlatBlockType) Craftable).getOutputCount() : 1;
+        final int craftAmount =
+                Craftable instanceof EnumFlatBlockType ? ((EnumFlatBlockType) Craftable).getOutputCount() : 1;
 
         final DyeColor alternateDye = EnumFlatColorAttributes.getAlternateDye(charistics);
         final HashSet<DyeColor> alternateSet = new HashSet<DyeColor>();
@@ -314,9 +304,7 @@ public class InventoryColoredBlockCrafter implements IInventory {
         return out;
     }
 
-    private ItemCraftingSource findItem(
-            final HashSet<ItemCraftingSource> hashSet,
-            final boolean simulate) {
+    private ItemCraftingSource findItem(final HashSet<ItemCraftingSource> hashSet, final boolean simulate) {
         for (final ItemCraftingSource src : hashSet) {
             src.simulate = simulate;
             final ItemStack is = src.getStack();
@@ -329,17 +317,12 @@ public class InventoryColoredBlockCrafter implements IInventory {
     }
 
     @Override
-    public ItemStack removeStackFromSlot(
-            final int index) {
+    public ItemStack removeStackFromSlot(final int index) {
         return ModUtil.getEmptyStack();
     }
 
     @Override
-    public void setInventorySlotContents(
-            final int index,
-            final ItemStack stack) {
-
-    }
+    public void setInventorySlotContents(final int index, final ItemStack stack) {}
 
     @Override
     public int getInventoryStackLimit() {
@@ -347,55 +330,44 @@ public class InventoryColoredBlockCrafter implements IInventory {
     }
 
     @Override
-    public void markDirty() {
-
-    }
+    public void markDirty() {}
 
     @Override
-    public boolean isUsableByPlayer(
-            final PlayerEntity player) {
+    public boolean isUsableByPlayer(final PlayerEntity player) {
         return true;
     }
 
     @Override
-    public void openInventory(
-            final PlayerEntity player) {
-
-    }
+    public void openInventory(final PlayerEntity player) {}
 
     @Override
-    public void closeInventory(
-            final PlayerEntity player) {
-
-    }
+    public void closeInventory(final PlayerEntity player) {}
 
     @Override
-    public boolean isItemValidForSlot(
-            final int index,
-            final ItemStack stack) {
+    public boolean isItemValidForSlot(final int index, final ItemStack stack) {
         return false;
     }
 
     /*
-        @Override
-        public int getField(
-                final int id )
-        {
-            return 0;
-        }
-        @Override
-        public void setField(
-                final int id,
-                final int value )
-        {
+    	@Override
+    	public int getField(
+    			final int id )
+    	{
+    		return 0;
+    	}
+    	@Override
+    	public void setField(
+    			final int id,
+    			final int value )
+    	{
 
-        }
+    	}
 
-        @Override
-        public int getFieldCount()
-        {
-            return 0;
-        }
+    	@Override
+    	public int getFieldCount()
+    	{
+    		return 0;
+    	}
     */
     @Override
     public void clear() {
@@ -404,7 +376,7 @@ public class InventoryColoredBlockCrafter implements IInventory {
 
     @Override
     public boolean isEmpty() // whatever this is...
-    {
+            {
         for (final ItemStack itemstack : options) {
             if (!itemstack.isEmpty()) {
                 return false;
@@ -418,13 +390,13 @@ public class InventoryColoredBlockCrafter implements IInventory {
     @Override
     public ITextComponent getCustomName()
     {
-        return null;
+    	return null;
     }
 
     @Override
     public ITextComponent getName()
     {
-        return null;
+    	return null;
     }
 
      */

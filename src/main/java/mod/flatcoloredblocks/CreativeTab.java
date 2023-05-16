@@ -1,6 +1,7 @@
 package mod.flatcoloredblocks;
 
 import com.google.common.base.Stopwatch;
+import java.util.concurrent.TimeUnit;
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -8,8 +9,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-
-import java.util.concurrent.TimeUnit;
 
 public class CreativeTab extends ItemGroup {
 
@@ -66,7 +65,8 @@ public class CreativeTab extends ItemGroup {
                 continue;
             }
 
-            final int out = ((BlockFlatColored) b).hsvFromState(ModUtil.getFlatColoredBlockState(((BlockFlatColored) b), is));
+            final int out =
+                    ((BlockFlatColored) b).hsvFromState(ModUtil.getFlatColoredBlockState(((BlockFlatColored) b), is));
 
             final int s = out >> 8 & 0xff;
             final int v = out & 0xff;

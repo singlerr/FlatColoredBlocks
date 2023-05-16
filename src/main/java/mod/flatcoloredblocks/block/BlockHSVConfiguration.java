@@ -5,22 +5,22 @@ import mod.flatcoloredblocks.config.ModConfig;
 public class BlockHSVConfiguration {
 
     // fact, 16 meta per block.
-    public final static int META_SCALE = 16;
-    final public int MAX_SHADE_HUE_MINUS_ONE;
-    final public int MAX_SHADE_SATURATION_MINUS_ONE;
-    final public int MAX_SHADE_VALUE_MINUS_ONE;
-    final public int MAX_SHADE_VARIANT_MINUS_ONE;
-    final public int MAX_SHADES;
-    final public int META_SCALE_MINUS_ONE;
-    final public int MAX_SHADE_BLOCKS;
-    final public int MAX_SHADES_MINUS_ONE;
-    final public int finalShades;
+    public static final int META_SCALE = 16;
+    public final int MAX_SHADE_HUE_MINUS_ONE;
+    public final int MAX_SHADE_SATURATION_MINUS_ONE;
+    public final int MAX_SHADE_VALUE_MINUS_ONE;
+    public final int MAX_SHADE_VARIANT_MINUS_ONE;
+    public final int MAX_SHADES;
+    public final int META_SCALE_MINUS_ONE;
+    public final int MAX_SHADE_BLOCKS;
+    public final int MAX_SHADES_MINUS_ONE;
+    public final int finalShades;
     // shade number to color conversion tables.
-    final public int[] shadeConvertHue;
-    final public int[] shadeConvertSat;
-    final public int[] shadeConvertValue;
-    final public int[] shadeConvertVariant;
-    final public EnumFlatBlockType type;
+    public final int[] shadeConvertHue;
+    public final int[] shadeConvertSat;
+    public final int[] shadeConvertValue;
+    public final int[] shadeConvertVariant;
+    public final EnumFlatBlockType type;
     // collection of semi-constants used to generate blocks and shades.
     public int MAX_SHADE_HUE;
     public int MAX_SHADE_SATURATION;
@@ -40,9 +40,7 @@ public class BlockHSVConfiguration {
     public double VARIANT_MAX;
     public String textureStyle;
 
-    public BlockHSVConfiguration(
-            final EnumFlatBlockType type,
-            final ModConfig config) {
+    public BlockHSVConfiguration(final EnumFlatBlockType type, final ModConfig config) {
         this.type = type;
         populateFromConfig(config, type);
 
@@ -87,11 +85,7 @@ public class BlockHSVConfiguration {
     }
 
     // used to generate color conversion tables.
-    private static int adjustRange(
-            double value,
-            final double exponent,
-            final double min,
-            final double max) {
+    private static int adjustRange(double value, final double exponent, final double min, final double max) {
         // insure its in range...
         value = Math.min(1.0, Math.max(0.0, value));
 
@@ -110,16 +104,11 @@ public class BlockHSVConfiguration {
         return Math.min(255, Math.max(0, (int) (0xff * value)));
     }
 
-    private static int combine(
-            final int r,
-            final int g,
-            final int b) {
+    private static int combine(final int r, final int g, final int b) {
         return r << 16 | g << 8 | b;
     }
 
-    protected void populateFromConfig(
-            final ModConfig config,
-            final EnumFlatBlockType type) {
+    protected void populateFromConfig(final ModConfig config, final EnumFlatBlockType type) {
         switch (type) {
             case NORMAL:
                 MAX_SHADE_HUE = config.HUE_SHADES;
@@ -196,8 +185,7 @@ public class BlockHSVConfiguration {
         }
     }
 
-    public int hsvFromNumber(
-            int shadeNum) {
+    public int hsvFromNumber(int shadeNum) {
         int v = 0;
         int s = 0;
         int h = 0;
@@ -232,13 +220,11 @@ public class BlockHSVConfiguration {
         return MAX_SHADES;
     }
 
-    public String getBlockName(
-            final int varientNum) {
+    public String getBlockName(final int varientNum) {
         if (type == EnumFlatBlockType.NORMAL) {
             return type.blockName;
         }
 
         return type.blockName + "_" + shadeConvertVariant[varientNum];
     }
-
 }

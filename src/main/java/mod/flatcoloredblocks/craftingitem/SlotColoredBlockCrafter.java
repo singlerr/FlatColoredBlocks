@@ -21,23 +21,18 @@ public class SlotColoredBlockCrafter extends Slot {
     }
 
     @Override
-    public boolean isItemValid(
-            final ItemStack stack) {
+    public boolean isItemValid(final ItemStack stack) {
         return false;
     }
 
     @Override
-    public boolean canTakeStack(
-            final PlayerEntity playerIn) {
+    public boolean canTakeStack(final PlayerEntity playerIn) {
         return !ModUtil.isEmpty(secondInv.craftItem(getStack(), 1, true));
     }
 
     @Override
-    public ItemStack onTake(
-            PlayerEntity thePlayer,
-            ItemStack stack) {
+    public ItemStack onTake(PlayerEntity thePlayer, ItemStack stack) {
         secondInv.craftItem(stack, 1, false);
         return stack;
     }
-
 }

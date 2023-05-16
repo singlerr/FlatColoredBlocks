@@ -1,9 +1,8 @@
 package mod.flatcoloredblocks.block;
 
+import java.util.Set;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.item.DyeColor;
-
-import java.util.Set;
 
 public enum EnumFlatColorAttributes {
     // non-colors
@@ -55,10 +54,7 @@ public enum EnumFlatColorAttributes {
     }
 
     EnumFlatColorAttributes(
-            final boolean isColor,
-            final boolean isSaturated,
-            final DyeColor dye,
-            final MaterialColor mapColor) {
+            final boolean isColor, final boolean isSaturated, final DyeColor dye, final MaterialColor mapColor) {
         isModifier = !isColor;
         this.isSaturated = isSaturated;
         primaryDye = dye;
@@ -66,17 +62,17 @@ public enum EnumFlatColorAttributes {
         this.mapColor = mapColor;
     }
 
-    public static DyeColor getAlternateDye(
-            final Set<EnumFlatColorAttributes> characteristics) {
-        if (characteristics.contains(EnumFlatColorAttributes.orange) && characteristics.contains(EnumFlatColorAttributes.dark)) {
+    public static DyeColor getAlternateDye(final Set<EnumFlatColorAttributes> characteristics) {
+        if (characteristics.contains(EnumFlatColorAttributes.orange)
+                && characteristics.contains(EnumFlatColorAttributes.dark)) {
             return DyeColor.BROWN;
         }
 
-        if (characteristics.contains(EnumFlatColorAttributes.blue) && characteristics.contains(EnumFlatColorAttributes.light)) {
+        if (characteristics.contains(EnumFlatColorAttributes.blue)
+                && characteristics.contains(EnumFlatColorAttributes.light)) {
             return DyeColor.LIGHT_BLUE;
         }
 
         return null;
     }
-
 }

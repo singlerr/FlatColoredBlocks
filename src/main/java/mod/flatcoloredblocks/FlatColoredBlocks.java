@@ -1,5 +1,8 @@
 package mod.flatcoloredblocks;
 
+import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import mod.flatcoloredblocks.block.BlockHSVConfiguration;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
@@ -22,10 +25,6 @@ import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.IForgeRegistry;
-
-import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
 
 @Mod(FlatColoredBlocks.MODID)
 public class FlatColoredBlocks {
@@ -53,8 +52,7 @@ public class FlatColoredBlocks {
         config = new ModConfig(new File(FMLPaths.CONFIGDIR.get().toFile(), MODID));
         initHSVFromConfiguration(config);
 
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () ->
-        {
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
             ClientSide.instance.preinit();
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSide.instance::init);
         });
@@ -62,8 +60,7 @@ public class FlatColoredBlocks {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::init);
     }
 
-    private void init(
-            final FMLCommonSetupEvent event) {
+    private void init(final FMLCommonSetupEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -74,26 +71,21 @@ public class FlatColoredBlocks {
     }
 
     public int getFullNumberOfBlocks() {
-        return normal.getNumberOfShades()
-                + transparent.getNumberOfShades()
-                + glowing.getNumberOfShades();
+        return normal.getNumberOfShades() + transparent.getNumberOfShades() + glowing.getNumberOfShades();
     }
 
-    public void initHSVFromConfiguration(
-            final ModConfig config) {
+    public void initHSVFromConfiguration(final ModConfig config) {
         normal = new BlockHSVConfiguration(EnumFlatBlockType.NORMAL, config);
         transparent = new BlockHSVConfiguration(EnumFlatBlockType.TRANSPARENT, config);
         glowing = new BlockHSVConfiguration(EnumFlatBlockType.GLOWING, config);
     }
 
     @SubscribeEvent
-    public void serverStarted(
-            FMLServerStartedEvent event) {
+    public void serverStarted(FMLServerStartedEvent event) {
         Log.info("Server start");
     }
 
-    public void items(
-            IForgeRegistry<Item> registry) {
+    public void items(IForgeRegistry<Item> registry) {
         registry.register(FlatColoredBlocks.instance.itemColoredBlockCrafting = new ItemColoredBlockCrafter());
 
         for (BlockItem ib : itemBlocks) {
@@ -101,9 +93,12 @@ public class FlatColoredBlocks {
         }
     }
 
-    public void blocks(
-            IForgeRegistry<Block> registry) {
-        final BlockHSVConfiguration[] configs = new BlockHSVConfiguration[]{FlatColoredBlocks.instance.normal, FlatColoredBlocks.instance.transparent, FlatColoredBlocks.instance.glowing};
+    public void blocks(IForgeRegistry<Block> registry) {
+        final BlockHSVConfiguration[] configs = new BlockHSVConfiguration[] {
+            FlatColoredBlocks.instance.normal,
+            FlatColoredBlocks.instance.transparent,
+            FlatColoredBlocks.instance.glowing
+        };
 
         // any time we regenerate blocks we regenerate this.
         itemBlocks.clear();
@@ -123,19 +118,15 @@ public class FlatColoredBlocks {
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
         @SubscribeEvent
-        public static void onBlocksRegistry(
-                RegistryEvent.Register<Block> ev) {
+        public static void onBlocksRegistry(RegistryEvent.Register<Block> ev) {
             Log.debug("registering blocks : " + ev.getName());
             FlatColoredBlocks.instance.blocks(ev.getRegistry());
         }
 
         @SubscribeEvent
-        public static void onItemsRegistry(
-                RegistryEvent.Register<Item> ev) {
+        public static void onItemsRegistry(RegistryEvent.Register<Item> ev) {
             Log.debug("registering items : " + ev.getName());
             FlatColoredBlocks.instance.items(ev.getRegistry());
         }
-
     }
-
 }

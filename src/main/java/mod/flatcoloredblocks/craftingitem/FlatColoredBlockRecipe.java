@@ -1,5 +1,6 @@
 package mod.flatcoloredblocks.craftingitem;
 
+import java.util.*;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.ModUtil;
 import mod.flatcoloredblocks.block.BlockFlatColored;
@@ -21,16 +22,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 
-import java.util.*;
-
 // TODO: FlatColoredBlockRecipe is not registered with anything.
 
 public class FlatColoredBlockRecipe implements IRecipe {
 
-    private final ResourceLocation recipeName = new ResourceLocation(FlatColoredBlocks.MODID, "flatcoloredblockcrafting");
+    private final ResourceLocation recipeName =
+            new ResourceLocation(FlatColoredBlocks.MODID, "flatcoloredblockcrafting");
 
-    public ItemStack getRequirements(
-            final IInventory is) {
+    public ItemStack getRequirements(final IInventory is) {
         if (is == null) {
             return ModUtil.getEmptyStack();
         }
@@ -72,7 +71,8 @@ public class FlatColoredBlockRecipe implements IRecipe {
             final Object Craftable = flatBlock.getCraftable();
             final HashSet<DyeColor> requiredDyes = new HashSet<DyeColor>();
 
-            final int craftAmount = Craftable instanceof EnumFlatBlockType ? ((EnumFlatBlockType) Craftable).getOutputCount() : 1;
+            final int craftAmount =
+                    Craftable instanceof EnumFlatBlockType ? ((EnumFlatBlockType) Craftable).getOutputCount() : 1;
             ModUtil.setStackSize(target, craftAmount);
 
             final DyeColor alternateDye = EnumFlatColorAttributes.getAlternateDye(charistics);
@@ -88,7 +88,8 @@ public class FlatColoredBlockRecipe implements IRecipe {
             }
 
             final HashMap<Object, Collection<Item>> dyeList = InventoryColoredBlockCrafter.getDyeList();
-            if (!alternateSet.isEmpty() && testRequirements(alternateSet, flatBlock.getCraftable(), otherItems, dyeList)) {
+            if (!alternateSet.isEmpty()
+                    && testRequirements(alternateSet, flatBlock.getCraftable(), otherItems, dyeList)) {
                 return target;
             }
 
@@ -121,9 +122,7 @@ public class FlatColoredBlockRecipe implements IRecipe {
         return false;
     }
 
-    private boolean findAndRemove(
-            final Collection<Item> matchList,
-            final List<ItemStack> testList) {
+    private boolean findAndRemove(final Collection<Item> matchList, final List<ItemStack> testList) {
         for (final Item match : matchList) {
             for (int idx = 0; idx < testList.size(); ++idx) {
                 final ItemStack test = testList.get(idx);
@@ -136,23 +135,19 @@ public class FlatColoredBlockRecipe implements IRecipe {
         return false;
     }
 
-    private List<ItemStack> cloneList(
-            final List<ItemStack> otherItems) {
+    private List<ItemStack> cloneList(final List<ItemStack> otherItems) {
         final List<ItemStack> l = new ArrayList<ItemStack>();
         l.addAll(otherItems);
         return l;
     }
 
     @Override
-    public boolean matches(
-            final IInventory inv,
-            final World worldIn) {
+    public boolean matches(final IInventory inv, final World worldIn) {
         return !ModUtil.isEmpty(getRequirements(inv));
     }
 
     @Override
-    public ItemStack getCraftingResult(
-            final IInventory inv) {
+    public ItemStack getCraftingResult(final IInventory inv) {
         return getRequirements(inv);
     }
 
@@ -162,8 +157,7 @@ public class FlatColoredBlockRecipe implements IRecipe {
     }
 
     @Override
-    public NonNullList<ItemStack> getRemainingItems(
-            final IInventory inv) {
+    public NonNullList<ItemStack> getRemainingItems(final IInventory inv) {
         final NonNullList<ItemStack> ret = NonNullList.create();
 
         for (int i = 0; i < ret.size(); i++) {
@@ -189,9 +183,7 @@ public class FlatColoredBlockRecipe implements IRecipe {
     }
 
     @Override
-    public boolean canFit(
-            int width,
-            int height) {
+    public boolean canFit(int width, int height) {
         return width > 1 || height > 1;
     }
 
@@ -224,5 +216,4 @@ public class FlatColoredBlockRecipe implements IRecipe {
     public IRecipeType<?> getType() {
         return IRecipeType.CRAFTING;
     }
-
 }

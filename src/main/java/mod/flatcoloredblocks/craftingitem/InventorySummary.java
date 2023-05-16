@@ -1,11 +1,10 @@
 package mod.flatcoloredblocks.craftingitem;
 
-import mod.flatcoloredblocks.block.EnumFlatBlockType;
-import net.minecraft.item.DyeColor;
-
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import mod.flatcoloredblocks.block.EnumFlatBlockType;
+import net.minecraft.item.DyeColor;
 
 /**
  * Stores the result of analsis of a player's inventory.
@@ -30,8 +29,7 @@ class InventorySummary {
         dyes = dyeSet;
     }
 
-    public boolean has(
-            final EnumFlatBlockType craftable) {
+    public boolean has(final EnumFlatBlockType craftable) {
         switch (craftable) {
             case GLOWING:
                 return hasGlowstone;
@@ -43,5 +41,4 @@ class InventorySummary {
 
         return false;
     }
-
 }

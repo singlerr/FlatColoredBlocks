@@ -2,6 +2,11 @@ package mod.flatcoloredblocks.resource;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.imageio.ImageIO;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.block.BlockHSVConfiguration;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
@@ -12,12 +17,6 @@ import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class ResourceGenerator {
 
@@ -47,9 +46,7 @@ public class ResourceGenerator {
         registerConfiguredResources(EnumFlatBlockType.TRANSPARENT, FlatColoredBlocks.instance.transparent);
     }
 
-    private void registerConfiguredResources(
-            EnumFlatBlockType type,
-            BlockHSVConfiguration config) {
+    private void registerConfiguredResources(EnumFlatBlockType type, BlockHSVConfiguration config) {
         for (int varient = 0; varient < config.shadeConvertVariant.length; varient++) {
             String name = config.getBlockName(varient);
 
@@ -57,16 +54,19 @@ public class ResourceGenerator {
             CustomResourceInjector.addResource("blockstates", name, ".json", blockstates.getBytes());
 
             if (type == EnumFlatBlockType.TRANSPARENT) {
-                final ResourceLocation sourceLoc = ClientSide.instance.getTextureResourceLocation(EnumFlatBlockType.TRANSPARENT);
-                final ResourceLocation textureName = ClientSide.instance.getTextureName(EnumFlatBlockType.TRANSPARENT, varient);
+                final ResourceLocation sourceLoc =
+                        ClientSide.instance.getTextureResourceLocation(EnumFlatBlockType.TRANSPARENT);
+                final ResourceLocation textureName =
+                        ClientSide.instance.getTextureName(EnumFlatBlockType.TRANSPARENT, varient);
 
                 try {
-                    //final IResource iresource = Minecraft.getInstance().getResourceManager().getResource(sourceLoc);
+                    // final IResource iresource = Minecraft.getInstance().getResourceManager().getResource(sourceLoc);
                     String loc = ClientSide.instance.getTextureRawLocation(EnumFlatBlockType.TRANSPARENT);
                     InputStream is = getClass().getClassLoader().getResourceAsStream(loc);
                     final NativeImage bi = NativeImage.read(is);
 
-                    final BufferedImage image = new BufferedImage(bi.getWidth(), bi.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+                    final BufferedImage image =
+                            new BufferedImage(bi.getWidth(), bi.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
                     final int xx = bi.getWidth();
                     final int yy = bi.getHeight();
 
@@ -81,13 +81,15 @@ public class ResourceGenerator {
 
                     ByteArrayOutputStream data = new ByteArrayOutputStream(0);
                     ImageIO.write(image, "png", data);
-                    CustomResourceInjector.addResource("textures/blocks", textureName.getPath(), ".png", data.toByteArray());
+                    CustomResourceInjector.addResource(
+                            "textures/blocks", textureName.getPath(), ".png", data.toByteArray());
                 } catch (IOException e) {
                     // fails the first time it runs.
                 }
 
                 String model = "{\"parent\":\"flatcoloredblocks:block/flatcoloredblock_" + config.textureStyle + "\","
-                        + "\"textures\":{\"all\":\"flatcoloredblocks:blocks/" + textureName.getPath() + "\",\"particle\":\"flatcoloredblocks:blocks/" + textureName.getPath() + "\"}}";
+                        + "\"textures\":{\"all\":\"flatcoloredblocks:blocks/" + textureName.getPath()
+                        + "\",\"particle\":\"flatcoloredblocks:blocks/" + textureName.getPath() + "\"}}";
                 CustomResourceInjector.addResource("models/block", name, ".json", model.getBytes());
                 CustomResourceInjector.addResource("models/item", name, ".json", model.getBytes());
             } else {
@@ -97,5 +99,4 @@ public class ResourceGenerator {
             }
         }
     }
-
 }

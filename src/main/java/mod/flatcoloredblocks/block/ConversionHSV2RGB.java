@@ -5,10 +5,7 @@ import java.util.HashMap;
 public class ConversionHSV2RGB {
     private static final HashMap<Integer, Integer> conversion = new HashMap<Integer, Integer>();
 
-    private static int fromHSV(
-            final double in_h,
-            final double in_s,
-            final double in_v) {
+    private static int fromHSV(final double in_h, final double in_s, final double in_v) {
         double hueWheel, p, q, t, ff;
         int hueWheelPart;
         double out_r = 0.0, out_g = 0.0, out_b = 0.0;
@@ -69,10 +66,7 @@ public class ConversionHSV2RGB {
         return rgb(out_r, out_g, out_b);
     }
 
-    private static int rgb(
-            final double out_r,
-            final double out_g,
-            final double out_b) {
+    private static int rgb(final double out_r, final double out_g, final double out_b) {
         final int r = Math.min(0xff, Math.max(0x00, (int) (out_r * 0xff)));
         final int g = Math.min(0xff, Math.max(0x00, (int) (out_g * 0xff)));
         final int b = Math.min(0xff, Math.max(0x00, (int) (out_b * 0xff)));
@@ -80,8 +74,7 @@ public class ConversionHSV2RGB {
         return r << 16 | g << 8 | b;
     }
 
-    public static int toRGB(
-            final int hsvFromState) {
+    public static int toRGB(final int hsvFromState) {
         Integer rgb = conversion.get(hsvFromState);
 
         if (rgb == null) {
@@ -94,5 +87,4 @@ public class ConversionHSV2RGB {
 
         return rgb;
     }
-
 }
