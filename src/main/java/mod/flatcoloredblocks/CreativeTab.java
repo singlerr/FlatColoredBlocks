@@ -1,97 +1,88 @@
 package mod.flatcoloredblocks;
 
-import java.util.concurrent.TimeUnit;
-
 import com.google.common.base.Stopwatch;
-
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
-public class CreativeTab extends ItemGroup
-{
+import java.util.concurrent.TimeUnit;
 
-	public CreativeTab()
-	{
-		super( "FlatColoredBlocks" );
-	}
+public class CreativeTab extends ItemGroup {
 
-	private int listOffset = 0;
-	private Stopwatch offsetTimer;
-	private NonNullList<ItemStack> list;
+    private int listOffset = 0;
+    private Stopwatch offsetTimer;
+    private NonNullList<ItemStack> list;
 
-	public ItemStack createIcon()
-	{
-		if ( list == null )
-		{
-			initalizeList();
-		}
+    public CreativeTab() {
+        super("FlatColoredBlocks");
+    }
 
-		if ( list.size() == 0 )
-		{
-			return new ItemStack( Blocks.COBBLESTONE );
-		}
+    @Override
+    public ItemStack createIcon() {
+        if (list == null) {
+            initializeList();
+        }
 
-		// check timer, and if 0.7 seconds has elapsed, step it forwards ( and
-		// keep it under list.size )
-		if ( offsetTimer.elapsed( TimeUnit.MILLISECONDS ) > 700 )
-		{
-			listOffset = ++listOffset % list.size();
-			offsetTimer = Stopwatch.createStarted();
-		}
+        if (list.size() == 0) {
+            return new ItemStack(Blocks.COBBLESTONE);
+        }
 
-		return list.get( listOffset );
-	}
+        // check timer, and if 0.7 seconds has elapsed, step it forwards ( and
+        // keep it under list.size )
+        if (offsetTimer.elapsed(TimeUnit.MILLISECONDS) > 700) {
+            listOffset = ++listOffset % list.size();
+            offsetTimer = Stopwatch.createStarted();
+        }
 
-	// initialize cycling icon.
-	private void initalizeList()
-	{
-		offsetTimer = Stopwatch.createStarted();
-		list = NonNullList.create();
-		fill( list );
+        return list.get(listOffset);
+    }
 
-		for ( int x = 0; x < list.size(); ++x )
-		{
-			final ItemStack is = list.get( x );
+    // initialize cycling icon.
+    public void initializeList() {
+        offsetTimer = Stopwatch.createStarted();
+        list = NonNullList.create();
+        fill(list);
 
-			if ( !( is.getItem() instanceof ItemBlock ) )
-			{
-				list.remove( x );
-				--x;
-				continue;
-			}
+        for (int x = 0; x < list.size(); ++x) {
+            final ItemStack is = list.get(x);
 
-			final ItemBlock ib = (ItemBlock) is.getItem();
-			final Block b = ib.getBlock();
+            if (!(is.getItem() instanceof BlockItem)) {
+                list.remove(x);
+                --x;
+                continue;
+            }
 
-			// Remove other peoples stuff list..
-			if ( !( b instanceof BlockFlatColored ) )
-			{
-				list.remove( x );
-				--x;
-				continue;
-			}
+            final BlockItem ib = (BlockItem) is.getItem();
+            final Block b = ib.getBlock();
 
-			final int out = ( (BlockFlatColored) b ).hsvFromState( ModUtil.getFlatColoredBlockState( ( (BlockFlatColored) b ), is ) );
+            // Remove other peoples stuff list..
+            if (!(b instanceof BlockFlatColored)) {
+                list.remove(x);
+                --x;
+                continue;
+            }
 
-			final int s = out >> 8 & 0xff;
-			final int v = out & 0xff;
+            final int out = ((BlockFlatColored) b).hsvFromState(ModUtil.getFlatColoredBlockState(((BlockFlatColored) b), is));
 
-			if ( s < 200 || v < 140 || v > 170 )
-			{
-				list.remove( x );
-				--x;
-			}
-		}
+            final int s = out >> 8 & 0xff;
+            final int v = out & 0xff;
 
-		if ( list.isEmpty() )
-		{
-			fill( list );
-		}
-	}
+            if (s < 200 || v < 140 || v > 170) {
+                list.remove(x);
+                --x;
+            }
+        }
 
+        if (list.isEmpty()) {
+            fill(list);
+        }
+    }
+
+    public NonNullList<ItemStack> getList() {
+        return list;
+    }
 }

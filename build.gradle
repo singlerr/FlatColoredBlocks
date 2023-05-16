@@ -1,20 +1,31 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://repo.spongepowered.org/maven' }
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
         jcenter()
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
+plugins{
+    id 'java'
+    id 'maven-publish'
+    id "com.github.breadmoirai.github-release" version "2.4.1"
+}
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 
-version = "mc1.13.2-7.0"
+version = "mc1.16.5-1.0"
 group= "mod.flatcoloredblocks"
-archivesBaseName = 'flatcoloredblocks'
+archivesBaseName = 'flatcoloredblocks-revived'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
@@ -24,7 +35,7 @@ minecraft {
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'snapshot', version: '20180921-1.13'
+    mappings channel: 'snapshot', version: '20210309-1.16.5'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
     //accessTransformer = file('my_at.cfg')
@@ -32,15 +43,18 @@ minecraft {
     // default run configurations.
     // these can be tweaked, removed, or duplicated as needed.
     runs {
-        client = {
+        client {
             // recommended logging data for a userdev environment
             properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
             // recommended logging level for the console
             properties 'forge.logging.console.level': 'debug'
+
+            arg '-torg.spongepowered.asm.launch.MixinTweaker'
+
             workingDirectory project.file('run').canonicalPath
             source sourceSets.main
         }
-        server = {
+        server {
             // recommended logging data for a userdev environment
             properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
             // recommended logging level for the console
@@ -50,17 +64,68 @@ minecraft {
         }
     }
 }
-
+configurations {
+    embed
+    implementation.extendsFrom(embed)
+}
+repositories {
+    maven { url = 'https://repo.spongepowered.org/maven' }
+    maven {
+        url "https://cursemaven.com"
+    }
+    flatDir{
+        dir 'libs'
+    }
+}
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.13.2-25.0.22'
+    minecraft 'net.minecraftforge:forge:1.16.5-36.2.30'
+    implementation fg.deobf('mod.chiselsandbits:cb:0.3.4')
+    //implementation fg.deobf("curse.maven:chisels-bits-231095:3234842")
+    annotationProcessor 'org.spongepowered:mixin:0.8.4-SNAPSHOT:processor'
+    embed('org.spongepowered:mixin:0.8.4') {
+        exclude module: 'guava'
+        exclude module: 'commons-io'
+        exclude module: 'gson'
+    }
 }
 
+mixin {
+    add sourceSets.main, 'fcb.refmap.json'
+    config 'fcb.mixins.json'
+}
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
     manifest {
         attributes([
                     "Implementation-Title": project.name,
                     "Implementation-Version": "${version}",
-                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
+                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                    "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+                    "TweakOrder": "0"
+        ])
     }
+}
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'mod.flatcoloredblocks'
+            artifactId = 'flatcoloredblocks'
+            version = "1.0"
+
+            from components.java
+        }
+    }
+}
+githubRelease {
+    token System.getenv("githubToken").toString()
+    owner "singlerr"
+    repo "FlatColoredBlocks"
+    tagName version.toString()
+    targetCommitish "1.16.5"
+    releaseName "v${version.toString()}"
+    generateReleaseNotes true
+    body ""
+    releaseAssets jar.destinationDir.listFiles()
+    overwrite true
+    allowUploadToExisting.set true
 }

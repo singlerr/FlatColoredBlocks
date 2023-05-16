@@ -1,9 +1,5 @@
 package mod.flatcoloredblocks;
 
-import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
-
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import mod.flatcoloredblocks.block.BlockHSVConfiguration;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
@@ -13,8 +9,8 @@ import mod.flatcoloredblocks.config.ModConfig;
 import mod.flatcoloredblocks.craftingitem.ItemColoredBlockCrafter;
 import mod.flatcoloredblocks.network.NetworkRouter;
 import net.minecraft.block.Block;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -27,135 +23,119 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.IForgeRegistry;
 
-@Mod( FlatColoredBlocks.MODID )
-public class FlatColoredBlocks
-{
-	// create creative tab...
-	public static FlatColoredBlocks instance;
+import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
-	public static final String MODID = "flatcoloredblocks";
+@Mod(FlatColoredBlocks.MODID)
+public class FlatColoredBlocks {
+    public static final String MODID = "flatcoloredblocks";
+    private static final List<BlockItem> itemBlocks = new LinkedList<BlockItem>();
+    // create creative tab...
+    public static FlatColoredBlocks instance;
+    public CreativeTab creativeTab;
+    public ModConfig config;
+    // @ObjectHolder( "flatcoloredblocks:coloredcraftingitem" )
+    public ItemColoredBlockCrafter itemColoredBlockCrafting;
+    public BlockHSVConfiguration normal;
+    public BlockHSVConfiguration transparent;
+    public BlockHSVConfiguration glowing;
 
-	public CreativeTab creativeTab;
-	public ModConfig config;
+    public FlatColoredBlocks() {
+        instance = this;
 
-	// @ObjectHolder( "flatcoloredblocks:coloredcraftingitem" )
-	public ItemColoredBlockCrafter itemColoredBlockCrafting;
+        // configure creative tab.
+        creativeTab = new CreativeTab();
 
-	public BlockHSVConfiguration normal;
-	public BlockHSVConfiguration transparent;
-	public BlockHSVConfiguration glowing;
+        // configure networking and gui.
+        NetworkRouter.instance = new NetworkRouter();
 
-	public FlatColoredBlocks()
-	{
-		instance = this;
+        config = new ModConfig(new File(FMLPaths.CONFIGDIR.get().toFile(), MODID));
+        initHSVFromConfiguration(config);
 
-		// configure creative tab.
-		creativeTab = new CreativeTab();
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () ->
+        {
+            ClientSide.instance.preinit();
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSide.instance::init);
+        });
 
-		// configure networking and gui.
-		NetworkRouter.instance = new NetworkRouter();
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::init);
+    }
 
-		config = new ModConfig( new File( FMLPaths.CONFIGDIR.get().toFile(), MODID ) );
-		initHSVFromConfiguration( config );
+    private void init(
+            final FMLCommonSetupEvent event) {
+        MinecraftForge.EVENT_BUS.register(this);
+    }
 
-		DistExecutor.runWhenOn( Dist.CLIENT, () -> () ->
-		{
-			ClientSide.instance.preinit();
-			FMLJavaModLoadingContext.get().getModEventBus().addListener( ClientSide.instance::init );
-		} );
+    public int getFullNumberOfShades() {
+        return normal.getNumberOfShades()
+                + transparent.getNumberOfShades() * FlatColoredBlocks.instance.config.TRANSPARENCY_SHADES
+                + glowing.getNumberOfShades() * FlatColoredBlocks.instance.config.GLOWING_SHADES;
+    }
 
-		FMLJavaModLoadingContext.get().getModEventBus().addListener( this::init );
-	}
+    public int getFullNumberOfBlocks() {
+        return normal.getNumberOfShades()
+                + transparent.getNumberOfShades()
+                + glowing.getNumberOfShades();
+    }
 
-	private void init(
-			final FMLCommonSetupEvent event )
-	{
-		MinecraftForge.EVENT_BUS.register( this );
-	}
+    public void initHSVFromConfiguration(
+            final ModConfig config) {
+        normal = new BlockHSVConfiguration(EnumFlatBlockType.NORMAL, config);
+        transparent = new BlockHSVConfiguration(EnumFlatBlockType.TRANSPARENT, config);
+        glowing = new BlockHSVConfiguration(EnumFlatBlockType.GLOWING, config);
+    }
 
-	public int getFullNumberOfShades()
-	{
-		return normal.getNumberOfShades()
-				+ transparent.getNumberOfShades() * FlatColoredBlocks.instance.config.TRANSPARENCY_SHADES
-				+ glowing.getNumberOfShades() * FlatColoredBlocks.instance.config.GLOWING_SHADES;
-	}
+    @SubscribeEvent
+    public void serverStarted(
+            FMLServerStartedEvent event) {
+        Log.info("Server start");
+    }
 
-	public int getFullNumberOfBlocks()
-	{
-		return normal.getNumberOfShades()
-				+ transparent.getNumberOfShades()
-				+ glowing.getNumberOfShades();
-	}
+    public void items(
+            IForgeRegistry<Item> registry) {
+        registry.register(FlatColoredBlocks.instance.itemColoredBlockCrafting = new ItemColoredBlockCrafter());
 
-	public void initHSVFromConfiguration(
-			final ModConfig config )
-	{
-		normal = new BlockHSVConfiguration( EnumFlatBlockType.NORMAL, config );
-		transparent = new BlockHSVConfiguration( EnumFlatBlockType.TRANSPARENT, config );
-		glowing = new BlockHSVConfiguration( EnumFlatBlockType.GLOWING, config );
-	}
+        for (BlockItem ib : itemBlocks) {
+            registry.register(ib);
+        }
+    }
 
-	@Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD )
-	public static class RegistryEvents
-	{
-		@SubscribeEvent
-		public static void onBlocksRegistry(
-				RegistryEvent.Register<Block> ev )
-		{
-			Log.debug( "registering blocks : " + ev.getName() );
-			FlatColoredBlocks.instance.blocks( ev.getRegistry() );
-		}
+    public void blocks(
+            IForgeRegistry<Block> registry) {
+        final BlockHSVConfiguration[] configs = new BlockHSVConfiguration[]{FlatColoredBlocks.instance.normal, FlatColoredBlocks.instance.transparent, FlatColoredBlocks.instance.glowing};
 
-		@SubscribeEvent
-		public static void onItemsRegistry(
-				RegistryEvent.Register<Item> ev )
-		{
-			Log.debug( "registering items : " + ev.getName() );
-			FlatColoredBlocks.instance.items( ev.getRegistry() );
-		}
+        // any time we regenerate blocks we regenerate this.
+        itemBlocks.clear();
 
-	}
+        // create and configure all blocks.
+        for (final BlockHSVConfiguration hsvconfig : configs) {
+            for (int v = 0; v < hsvconfig.MAX_SHADE_VARIANT; ++v) {
+                final BlockFlatColored cb = BlockFlatColored.construct(hsvconfig, v);
+                registry.register(cb);
 
-	@SubscribeEvent
-	public void serverStarted(
-			FMLServerStartedEvent event )
-	{
-		Log.info( "Server start" );
-	}
+                final ItemBlockFlatColored cbi = new ItemBlockFlatColored(cb);
+                itemBlocks.add(cbi);
+            }
+        }
+    }
 
-	public void items(
-			IForgeRegistry<Item> registry )
-	{
-		registry.register( FlatColoredBlocks.instance.itemColoredBlockCrafting = new ItemColoredBlockCrafter() );
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class RegistryEvents {
+        @SubscribeEvent
+        public static void onBlocksRegistry(
+                RegistryEvent.Register<Block> ev) {
+            Log.debug("registering blocks : " + ev.getName());
+            FlatColoredBlocks.instance.blocks(ev.getRegistry());
+        }
 
-		for ( ItemBlock ib : itemBlocks )
-		{
-			registry.register( ib );
-		}
-	}
+        @SubscribeEvent
+        public static void onItemsRegistry(
+                RegistryEvent.Register<Item> ev) {
+            Log.debug("registering items : " + ev.getName());
+            FlatColoredBlocks.instance.items(ev.getRegistry());
+        }
 
-	private static List<ItemBlock> itemBlocks = new LinkedList<ItemBlock>();
-
-	public void blocks(
-			IForgeRegistry<Block> registry )
-	{
-		final BlockHSVConfiguration configs[] = new BlockHSVConfiguration[] { FlatColoredBlocks.instance.normal, FlatColoredBlocks.instance.transparent, FlatColoredBlocks.instance.glowing };
-
-		// any time we regenerate blocks we regenerate this.
-		itemBlocks.clear();
-
-		// create and configure all blocks.
-		for ( final BlockHSVConfiguration hsvconfig : configs )
-		{
-			for ( int v = 0; v < hsvconfig.MAX_SHADE_VARIANT; ++v )
-			{
-				final BlockFlatColored cb = BlockFlatColored.construct( hsvconfig, v );
-				registry.register( cb );
-
-				final ItemBlockFlatColored cbi = new ItemBlockFlatColored( cb );
-				itemBlocks.add( cbi );
-			}
-		}
-	}
+    }
 
 }

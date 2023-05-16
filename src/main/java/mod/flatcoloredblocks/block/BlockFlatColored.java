@@ -1,373 +1,305 @@
 package mod.flatcoloredblocks.block;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
-
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.IProperty;
+import net.minecraft.loot.LootContext;
 import net.minecraft.state.IntegerProperty;
+import net.minecraft.state.Property;
 import net.minecraft.state.StateContainer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
 
-public class BlockFlatColored extends Block
-{
+import java.util.*;
 
-	private static ArrayList<BlockFlatColored> coloredBlocks = new ArrayList<BlockFlatColored>();
-	private static int offset;
-	private static BlockHSVConfiguration newConfig;
+public class BlockFlatColored extends Block {
 
-	// block specific values.
-	private int shadeOffset; // first shade in block
-	private int maxShade; // this is the last shade in this block.
-	private BlockHSVConfiguration configuration; // HSV for this block.
-	private IntegerProperty shade; // block state configuration for block.
-	private final int varient;
+    private static final ArrayList<BlockFlatColored> coloredBlocks = new ArrayList<BlockFlatColored>();
+    private static int offset;
+    private static BlockHSVConfiguration newConfig;
+    // only used for description.
+    public final int opacity;
+    public final int lightValue;
+    private final int varient;
+    // block specific values.
+    private int shadeOffset; // first shade in block
+    private int maxShade; // this is the last shade in this block.
+    private BlockHSVConfiguration configuration; // HSV for this block.
+    private IntegerProperty shade; // block state configuration for block.
 
-	// only used for description.
-	public final int opacity;
-	public final int lightValue;
+    protected BlockFlatColored(
+            BlockHSVConfiguration type,
+            final float lightValue,
+            final float opacity,
+            final int varientNum) {
+        super(Block.Properties.create(opacity > 0.001 ? Material.GLASS : Material.ROCK)
+                .hardnessAndResistance(1.5F, 10.0F)
+                .setLightLevel((state) -> (int) (FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT ? Math.max(0, Math.min(15, 15.0f * (lightValue / 255.0f))) : 0))
+                .sound(opacity > 0.001 ? SoundType.GLASS : SoundType.STONE));
 
-	@Override
-	public IBlockState getStateForPlacement(
-			BlockItemUseContext context )
-	{
-		return super.getStateForPlacement( context ).with( shade, context.getItem().getOrCreateTag().getInt( "Shade" ) );
-	}
+        final String regName = type.getBlockName(varientNum);
 
-	@Override
-	public MaterialColor getMapColor(
-			IBlockState state,
-			IBlockReader world,
-			BlockPos pos )
-	{
-		for ( final EnumFlatColorAttributes attr : getFlatColorAttributes( state ) )
-		{
-			if ( !attr.isModifier )
-			{
-				return attr.mapColor;
-			}
-		}
+        // use the same name for item/block combo.
+        this.setRegistryName(FlatColoredBlocks.MODID, regName);
 
-		return MaterialColor.SNOW;
-	}
+        // mimic stone..
+        // TODO: setHarvestLevel( "pickaxe", 0 );
 
-	// also used in item for item stack color.
-	public int colorFromState(
-			final IBlockState state )
-	{
-		final int fullAlpha = 0xff << 24;
-		return ConversionHSV2RGB.toRGB( hsvFromState( state ) ) | fullAlpha;
-	}
+        // TODO: setLightOpacity( opacity > 0.001 ? 0 : 255 );
 
-	public int getShadeNumber(
-			final IBlockState state )
-	{
-		if ( state.getBlock() instanceof BlockFlatColored )
-		{
-			final BlockFlatColored cb = (BlockFlatColored) state.getBlock();
-			return state.get( cb.shade ) + cb.shadeOffset;
-		}
+        // TODO: translucent = opacity > 0.001;
+        varient = varientNum;
 
-		return 0;
-	}
+        coloredBlocks.add(this);
+        BlockState state = getDefaultState();
+        this.lightValue = (int) (FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT ? Math.max(0, Math.min(15, 15.0f * (lightValue / 255.0f))) : 0);
+        this.opacity = 100 - Math.round(opacity * 100 / 255);
 
-	public int hsvFromState(
-			final IBlockState state )
-	{
-		if ( state == null )
-		{
-			return 0x000000;
-		}
+    }
 
-		return configuration.hsvFromNumber( getShadeNumber( state ) );
-	}
+    public static BlockFlatColored construct(
+            final BlockHSVConfiguration type,
+            final int varientNum) {
+        // pass these to createBlockState
+        newConfig = type;
 
-	public int getShadeOffset()
-	{
-		return shadeOffset;
-	}
+        // construct the block..
+        switch (type.type) {
+            case GLOWING:
+                return new BlockFlatColored(type, type.shadeConvertVariant[varientNum], 0, varientNum);
+            case NORMAL:
+                return new BlockFlatColored(type, 0, 0, varientNum);
+            case TRANSPARENT:
+                return new BlockFlatColoredTranslucent(type, 0, type.shadeConvertVariant[varientNum], varientNum);
+            default:
+                throw new RuntimeException("Invalid construction.");
+        }
+    }
 
-	public int getMaxShade()
-	{
-		return maxShade;
-	}
+    // generates a list of all shades without caring about which block it is.
+    public static void getAllShades(
+            final List<ItemStack> list) {
+        for (final BlockFlatColored cb : coloredBlocks) {
+            cb.outputShades(list, cb.getCraftCount());
+        }
+    }
 
-	public IProperty<Integer> getShade()
-	{
-		return shade;
-	}
+    static public List<BlockFlatColored> getAllBlocks() {
+        return coloredBlocks;
+    }
 
-	protected BlockFlatColored(
-			BlockHSVConfiguration type,
-			final float lightValue,
-			final float opacity,
-			final int varientNum )
-	{
-		super( Block.Properties.create( opacity > 0.001 ? Material.GLASS : Material.ROCK )
-				.hardnessAndResistance( 1.5F, 10.0F )
-				.lightValue( (int) ( FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT ? Math.max( 0, Math.min( 15, 15.0f * ( lightValue / 255.0f ) ) ) : 0 ) )
-				.sound( opacity > 0.001 ? SoundType.GLASS : SoundType.STONE ) );
+    @Override
+    public BlockState getStateForPlacement(
+            BlockItemUseContext context) {
+        return super.getStateForPlacement(context).with(shade, context.getItem().getOrCreateTag().getInt("Shade"));
+    }
 
-		final String regName = type.getBlockName( varientNum );
 
-		// use the same name for item/block combo.
-		this.setRegistryName( FlatColoredBlocks.MODID, regName );
+    public MaterialColor getMapColor(
+            BlockState state,
+            IBlockReader world,
+            BlockPos pos) {
+        for (final EnumFlatColorAttributes attr : getFlatColorAttributes(state)) {
+            if (!attr.isModifier) {
+                return attr.mapColor;
+            }
+        }
 
-		// mimic stone..
-		// TODO: setHarvestLevel( "pickaxe", 0 );
+        return MaterialColor.SNOW;
+    }
 
-		// TODO: setLightOpacity( opacity > 0.001 ? 0 : 255 );
+    @Override
+    public MaterialColor getMaterialColor() {
+        return super.getMaterialColor();
+    }
 
-		// TODO: translucent = opacity > 0.001;
-		varient = varientNum;
+    // also used in item for item stack color.
+    public int colorFromState(
+            final BlockState state) {
+        final int fullAlpha = 0xff << 24;
+        return ConversionHSV2RGB.toRGB(hsvFromState(state)) | fullAlpha;
+    }
 
-		coloredBlocks.add( this );
-		this.lightValue = (int) ( FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT ? Math.max( 0, Math.min( 15, 15.0f * ( lightValue / 255.0f ) ) ) : 0 );
-		this.opacity = 100 - Math.round( opacity * 100 / 255 );
-	}
+    public int getShadeNumber(
+            final BlockState state) {
+        if (state.getBlock() instanceof BlockFlatColored) {
+            final BlockFlatColored cb = (BlockFlatColored) state.getBlock();
+            return state.get(cb.shade) + cb.shadeOffset;
+        }
 
-	public static BlockFlatColored construct(
-			final BlockHSVConfiguration type,
-			final int varientNum )
-	{
-		// pass these to createBlockState
-		newConfig = type;
+        return 0;
+    }
 
-		// construct the block..
-		switch ( type.type )
-		{
-			case GLOWING:
-				return new BlockFlatColored( type, type.shadeConvertVariant[varientNum], 0, varientNum );
-			case NORMAL:
-				return new BlockFlatColored( type, 0, 0, varientNum );
-			case TRANSPARENT:
-				return new BlockFlatColoredTranslucent( type, 0, type.shadeConvertVariant[varientNum], varientNum );
-			default:
-				throw new RuntimeException( "Invalid construction." );
-		}
-	}
 
-	protected void fillStateContainer(
-			StateContainer.Builder<Block, IBlockState> builder )
-	{
-		shadeOffset = offset;
-		configuration = newConfig;
-		maxShade = shadeOffset + configuration.MAX_SHADES_MINUS_ONE;
+    public int hsvFromState(
+            final BlockState state) {
+        if (state == null) {
+            return 0x000000;
+        }
 
-		maxShade = configuration.MAX_SHADES_MINUS_ONE;
-		builder.add( shade = IntegerProperty.create( "shade", 0, maxShade - shadeOffset ) );
-	}
+        return configuration.hsvFromNumber(getShadeNumber(state));
+    }
 
-	@Override
-	public void getDrops(
-			IBlockState state,
-			NonNullList<ItemStack> drops,
-			World world,
-			BlockPos pos,
-			int fortune )
-	{
-		drops.add( getItem( world, pos, state ) );
-	}
+    public int getShadeOffset() {
+        return shadeOffset;
+    }
 
-	@Override
-	public ItemStack getItem(
-			IBlockReader world,
-			BlockPos pos,
-			IBlockState state )
-	{
-		ItemStack is = new ItemStack( this );
-		is.getOrCreateTag().setInt( "Shade", state.get( shade ) );
-		return is;
-	}
+    public int getMaxShade() {
+        return maxShade;
+    }
 
-	// convert block into all possible ItemStacks.
-	private void outputShades(
-			final List<ItemStack> list,
-			final int qty )
-	{
-		final Item item = Item.getItemFromBlock( this );
+    public Property<Integer> getShade() {
+        return shade;
+    }
 
-		for ( int x = shadeOffset; x <= maxShade; ++x )
-		{
-			ItemStack is = new ItemStack( item, qty );
-			is.getOrCreateTag().setInt( "Shade", x - shadeOffset );
-			list.add( is );
-		}
-	}
+    protected void fillStateContainer(
+            StateContainer.Builder<Block, BlockState> builder) {
+        shadeOffset = offset;
+        configuration = newConfig;
+        maxShade = shadeOffset + configuration.MAX_SHADES_MINUS_ONE;
 
-	public void fillItemGroup(
-			ItemGroup group,
-			NonNullList<ItemStack> items )
-	{
-		for ( int x = shadeOffset; x <= maxShade; ++x )
-		{
-			ItemStack is = new ItemStack( this, 1 );
-			is.getOrCreateTag().setInt( "Shade", x - shadeOffset );
-			items.add( is );
-		}
-	}
+        maxShade = configuration.MAX_SHADES_MINUS_ONE;
+        builder.add(shade = IntegerProperty.create("shade", 0, maxShade - shadeOffset));
+    }
 
-	public IBlockState getstateForStack(
-			ItemStack stack )
-	{
-		return getDefaultState().with( shade, stack.getOrCreateTag().getInt( "Shade" ) );
-	}
+    @Override
+    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
+        return Collections.singletonList(getItem(null, null, state));
+    }
 
-	// generates a list of all shades without caring about which block it is.
-	public static void getAllShades(
-			final List<ItemStack> list )
-	{
-		for ( final BlockFlatColored cb : coloredBlocks )
-		{
-			cb.outputShades( list, cb.getCraftCount() );
-		}
-	}
 
-	static public List<BlockFlatColored> getAllBlocks()
-	{
-		return coloredBlocks;
-	}
+    @Override
+    public ItemStack getItem(
+            IBlockReader world,
+            BlockPos pos,
+            BlockState state) {
+        ItemStack is = new ItemStack(this);
+        is.getOrCreateTag().putInt("Shade", state.get(shade));
+        return is;
+    }
 
-	private int getCraftCount()
-	{
-		if ( getCraftable() == EnumFlatBlockType.NORMAL )
-		{
-			return FlatColoredBlocks.instance.config.solidCraftingOutput;
-		}
+    // convert block into all possible ItemStacks.
+    private void outputShades(
+            final List<ItemStack> list,
+            final int qty) {
+        final Item item = Item.getItemFromBlock(this);
 
-		if ( getCraftable() == EnumFlatBlockType.TRANSPARENT )
-		{
-			return FlatColoredBlocks.instance.config.transparentCraftingOutput;
-		}
+        for (int x = shadeOffset; x <= maxShade; ++x) {
+            ItemStack is = new ItemStack(item, qty);
+            is.getOrCreateTag().putInt("Shade", x - shadeOffset);
+            list.add(is);
+        }
+    }
 
-		if ( getCraftable() == EnumFlatBlockType.GLOWING )
-		{
-			return FlatColoredBlocks.instance.config.glowingCraftingOutput;
-		}
+    @Override
+    public void fillItemGroup(
+            ItemGroup group,
+            NonNullList<ItemStack> items) {
+        for (int x = shadeOffset; x <= maxShade; ++x) {
+            ItemStack is = new ItemStack(this, 1);
+            is.getOrCreateTag().putInt("Shade", x - shadeOffset);
+            //TODO("BlockBitInfo#canChisel에서 오류가 발생해서 제대로 작동 안함")
+            items.add(is);
+        }
+    }
 
-		return 1;
-	}
+    public BlockState getstateForStack(
+            ItemStack stack) {
+        return getDefaultState().with(shade, stack.getOrCreateTag().getInt("Shade"));
+    }
 
-	// get details about a shade.
-	public Set<EnumFlatColorAttributes> getFlatColorAttributes(
-			final IBlockState state )
-	{
-		final int out = hsvFromState( state );
+    private int getCraftCount() {
+        if (getCraftable() == EnumFlatBlockType.NORMAL) {
+            return FlatColoredBlocks.instance.config.solidCraftingOutput;
+        }
 
-		final Set<EnumFlatColorAttributes> result = EnumSet.noneOf( EnumFlatColorAttributes.class );
+        if (getCraftable() == EnumFlatBlockType.TRANSPARENT) {
+            return FlatColoredBlocks.instance.config.transparentCraftingOutput;
+        }
 
-		final int h = ( out >> 16 & 0xff ) * 360 / 0xff;
-		final int s = out >> 8 & 0xff;
-		final int v = out & 0xff;
+        if (getCraftable() == EnumFlatBlockType.GLOWING) {
+            return FlatColoredBlocks.instance.config.glowingCraftingOutput;
+        }
 
-		if ( s == 0 )
-		{
-			if ( v < 64 )
-			{
-				return EnumSet.of( EnumFlatColorAttributes.black );
-			}
-			else if ( v > 256 - 64 )
-			{
-				return EnumSet.of( EnumFlatColorAttributes.white );
-			}
-			else if ( v > 256 - 128 )
-			{
-				return EnumSet.of( EnumFlatColorAttributes.silver );
-			}
-			else
-			{
-				return EnumSet.of( EnumFlatColorAttributes.grey );
-			}
-		}
+        return 1;
+    }
 
-		if ( v < 128 && s > 0.001 )
-		{
-			result.add( EnumFlatColorAttributes.dark );
-		}
-		else if ( v > 256 - 64 && s < 128 && s > 0.001 )
-		{
-			result.add( EnumFlatColorAttributes.light );
-		}
+    // get details about a shade.
+    public Set<EnumFlatColorAttributes> getFlatColorAttributes(
+            final BlockState state) {
+        final int out = hsvFromState(state);
 
-		if ( h >= 15 && h <= 45 )
-		{
-			result.add( EnumFlatColorAttributes.orange );
-		}
-		else if ( h >= 255 && h <= 285 )
-		{
-			result.add( EnumFlatColorAttributes.violet );
-		}
-		else if ( h >= 315 && h <= 345 )
-		{
-			result.add( EnumFlatColorAttributes.pink );
-		}
-		else if ( h >= 75 - 15 && h <= 75 + 15 )
-		{
-			result.add( EnumFlatColorAttributes.lime );
-		}
-		else if ( h >= 210 - 15 && h <= 210 + 15 )
-		{
-			result.add( EnumFlatColorAttributes.azure );
-		}
-		else if ( h >= 140 - 15 && h <= 140 + 15 )
-		{
-			result.add( EnumFlatColorAttributes.emerald );
-		}
-		else if ( h >= 330 || h <= 30 )
-		{
-			result.add( EnumFlatColorAttributes.red );
-		}
-		else if ( h >= 30 && h <= 90 )
-		{
-			result.add( EnumFlatColorAttributes.yellow );
-		}
-		else if ( h >= 90 && h <= 150 )
-		{
-			result.add( EnumFlatColorAttributes.green );
-		}
-		else if ( h >= 150 && h <= 210 )
-		{
-			result.add( EnumFlatColorAttributes.cyan );
-		}
-		else if ( h >= 210 && h <= 270 )
-		{
-			result.add( EnumFlatColorAttributes.blue );
-		}
-		else
-		{
-			result.add( EnumFlatColorAttributes.magenta );
-		}
+        final Set<EnumFlatColorAttributes> result = EnumSet.noneOf(EnumFlatColorAttributes.class);
 
-		return result;
-	}
+        final int h = (out >> 16 & 0xff) * 360 / 0xff;
+        final int s = out >> 8 & 0xff;
+        final int v = out & 0xff;
 
-	public EnumFlatBlockType getType()
-	{
-		return configuration.type;
-	}
+        if (s == 0) {
+            if (v < 64) {
+                return EnumSet.of(EnumFlatColorAttributes.black);
+            } else if (v > 256 - 64) {
+                return EnumSet.of(EnumFlatColorAttributes.white);
+            } else if (v > 256 - 128) {
+                return EnumSet.of(EnumFlatColorAttributes.silver);
+            } else {
+                return EnumSet.of(EnumFlatColorAttributes.grey);
+            }
+        }
 
-	public int getVarient()
-	{
-		return configuration.shadeConvertVariant[varient];
-	}
+        if (v < 128 && s > 0.001) {
+            result.add(EnumFlatColorAttributes.dark);
+        } else if (v > 256 - 64 && s < 128 && s > 0.001) {
+            result.add(EnumFlatColorAttributes.light);
+        }
 
-	public EnumFlatBlockType getCraftable()
-	{
-		return configuration.type;
-	}
+        if (h >= 15 && h <= 45) {
+            result.add(EnumFlatColorAttributes.orange);
+        } else if (h >= 255 && h <= 285) {
+            result.add(EnumFlatColorAttributes.violet);
+        } else if (h >= 315 && h <= 345) {
+            result.add(EnumFlatColorAttributes.pink);
+        } else if (h >= 75 - 15 && h <= 75 + 15) {
+            result.add(EnumFlatColorAttributes.lime);
+        } else if (h >= 210 - 15 && h <= 210 + 15) {
+            result.add(EnumFlatColorAttributes.azure);
+        } else if (h >= 140 - 15 && h <= 140 + 15) {
+            result.add(EnumFlatColorAttributes.emerald);
+        } else if (h >= 330 || h <= 30) {
+            result.add(EnumFlatColorAttributes.red);
+        } else if (h >= 30 && h <= 90) {
+            result.add(EnumFlatColorAttributes.yellow);
+        } else if (h >= 90 && h <= 150) {
+            result.add(EnumFlatColorAttributes.green);
+        } else if (h >= 150 && h <= 210) {
+            result.add(EnumFlatColorAttributes.cyan);
+        } else if (h >= 210 && h <= 270) {
+            result.add(EnumFlatColorAttributes.blue);
+        } else {
+            result.add(EnumFlatColorAttributes.magenta);
+        }
+
+        return result;
+    }
+
+    public EnumFlatBlockType getType() {
+        return configuration.type;
+    }
+
+    public int getVarient() {
+        return configuration.shadeConvertVariant[varient];
+    }
+
+    public EnumFlatBlockType getCraftable() {
+        return configuration.type;
+    }
 
 }

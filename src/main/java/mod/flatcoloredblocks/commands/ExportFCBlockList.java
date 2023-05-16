@@ -1,22 +1,5 @@
 package mod.flatcoloredblocks.commands;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import mod.flatcoloredblocks.FlatColoredBlocks;
-import mod.flatcoloredblocks.block.BlockFlatColored;
-import mod.flatcoloredblocks.block.ConversionHSV2RGB;
-import mod.flatcoloredblocks.block.ItemBlockFlatColored;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.command.CommandException;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentTranslation;
-
 // TODO: ExportFCBlockList command
 
 /*

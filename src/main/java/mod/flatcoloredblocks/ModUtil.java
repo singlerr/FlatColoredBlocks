@@ -1,58 +1,50 @@
 package mod.flatcoloredblocks;
 
-import javax.annotation.Nonnull;
-
 import mod.flatcoloredblocks.block.BlockFlatColored;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 
-@SuppressWarnings( "deprecation" )
-public class ModUtil
-{
+import javax.annotation.Nonnull;
 
-	public static void alterStack(
-			@Nonnull final ItemStack stack,
-			final int deltaStackSize )
-	{
-		setStackSize( stack, getStackSize( stack ) + deltaStackSize );
-	}
+@SuppressWarnings("deprecation")
+public class ModUtil {
 
-	public static void setStackSize(
-			@Nonnull final ItemStack stack,
-			final int stackSize )
-	{
-		stack.setCount( stackSize );
-	}
+    public static void alterStack(
+            @Nonnull final ItemStack stack,
+            final int deltaStackSize) {
+        setStackSize(stack, getStackSize(stack) + deltaStackSize);
+    }
 
-	public static int getStackSize(
-			@Nonnull final ItemStack stack )
-	{
-		return stack.getCount();
-	}
+    public static void setStackSize(
+            @Nonnull final ItemStack stack,
+            final int stackSize) {
+        stack.setCount(stackSize);
+    }
 
-	public static ItemStack getEmptyStack()
-	{
-		return ItemStack.EMPTY;
-	}
+    public static int getStackSize(
+            @Nonnull final ItemStack stack) {
+        return stack.getCount();
+    }
 
-	public static String translateToLocal(
-			final String string )
-	{
-		return I18n.format( string );
-	}
+    public static ItemStack getEmptyStack() {
+        return ItemStack.EMPTY;
+    }
 
-	public static boolean isEmpty(
-			final ItemStack i )
-	{
-		return i.isEmpty();
-	}
+    public static String translateToLocal(
+            final String string) {
+        return I18n.format(string);
+    }
 
-	public static IBlockState getFlatColoredBlockState(
-			BlockFlatColored blk,
-			ItemStack stack )
-	{
-		return blk.getstateForStack( stack );
-	}
+    public static boolean isEmpty(
+            final ItemStack i) {
+        return i.isEmpty();
+    }
+
+    public static BlockState getFlatColoredBlockState(
+            BlockFlatColored blk,
+            ItemStack stack) {
+        return blk.getstateForStack(stack);
+    }
 
 }

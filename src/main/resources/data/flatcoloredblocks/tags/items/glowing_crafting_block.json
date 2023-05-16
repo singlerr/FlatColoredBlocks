@@ -1,6 +1,6 @@
 {
-	"replace": false,
-	"values": [
-		"minecraft:glowstone"
-	]
+  "replace": false,
+  "values": [
+    "minecraft:glowstone"
+  ]
 }
