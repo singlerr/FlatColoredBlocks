@@ -206,7 +206,6 @@ public class BlockFlatColored extends Block {
         for (int x = shadeOffset; x <= maxShade; ++x) {
             ItemStack is = new ItemStack(this, 1);
             is.getOrCreateTag().putInt("Shade", x - shadeOffset);
-            //TODO("BlockBitInfo#canChisel에서 오류가 발생해서 제대로 작동 안함")
             items.add(is);
         }
     }
