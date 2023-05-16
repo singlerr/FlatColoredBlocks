@@ -30,7 +30,7 @@ public abstract class ReloadableResourceManagerMixin {
     @Inject(
             method = "reloadResources",
             at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
-    private void registerARRPs(
+    private void injectResourcePack(
             Executor prepareExecutor,
             Executor applyExecutor,
             CompletableFuture<Unit> initialStage,

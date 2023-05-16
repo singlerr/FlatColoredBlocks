@@ -39,6 +39,7 @@ public class CustomFileProvider extends ResourcePack {
     @Override
     protected InputStream getInputStream(String resourcePath) throws IOException {
         if (resourcePath.startsWith(prefix)) {
+            byte[] value = fakeFiles.get(resourcePath.substring(prefix.length()));
             return new ByteArrayInputStream(fakeFiles.get(resourcePath.substring(prefix.length())));
         }
 

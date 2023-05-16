@@ -4,7 +4,6 @@
   "refmap": "fcb.refmap.json",
   "mixins": [],
   "client": [
-    "DeprecationHelperMixin",
     "ReloadableResourceManagerMixin",
     "TagRegistryMixin"
   ],

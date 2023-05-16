@@ -3,27 +3,27 @@ buildscript {
         maven { url = 'https://maven.minecraftforge.net/' }
         maven { url = 'https://repo.spongepowered.org/maven' }
         maven {
-            url 'https://plugins.gradle.org/m2/'
+            url = uri("https://plugins.gradle.org/m2/")
         }
+
         jcenter()
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+        classpath 'net.researchgate:gradle-release:2.3.1'
     }
 }
 plugins{
     id 'java'
     id 'maven-publish'
-    id "com.github.breadmoirai.github-release" version "2.4.1"
-    id 'com.diffplug.spotless' version '6.13.0'
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
-
+apply plugin: 'net.researchgate.release'
 version = "mc1.16.5-1.0"
 group= "mod.flatcoloredblocks"
 archivesBaseName = 'flatcoloredblocks-revived'
@@ -79,10 +79,10 @@ repositories {
     }
 }
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.5-36.2.30'
+    minecraft 'net.minecraftforge:forge:1.16.5-36.2.34'
     implementation fg.deobf('mod.chiselsandbits:cb:0.3.4')
-    //implementation fg.deobf("curse.maven:chisels-bits-231095:3234842")
-    annotationProcessor 'org.spongepowered:mixin:0.8.4-SNAPSHOT:processor'
+
+    //annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
     embed('org.spongepowered:mixin:0.8.4') {
         exclude module: 'guava'
         exclude module: 'commons-io'
@@ -106,6 +106,7 @@ jar {
         ])
     }
 }
+
 publishing {
     publications {
         maven(MavenPublication) {
@@ -115,34 +116,5 @@ publishing {
 
             from components.java
         }
-    }
-}
-githubRelease {
-    token System.getenv("githubToken").toString()
-    owner "singlerr"
-    repo "FlatColoredBlocks"
-    tagName version.toString()
-    targetCommitish "1.16.5"
-    releaseName "v${version.toString()}"
-    generateReleaseNotes true
-    body ""
-    releaseAssets jar.destinationDir.listFiles()
-    overwrite true
-    allowUploadToExisting.set true
-}
-spotless {
-    java{
-        target 'src/*/java/**/*.java'
-        importOrder()
-
-        trimTrailingWhitespace()
-        indentWithSpaces()
-        indentWithTabs()
-        endWithNewline()
-        removeUnusedImports()
-        formatAnnotations()
-
-        palantirJavaFormat()
-
     }
 }
