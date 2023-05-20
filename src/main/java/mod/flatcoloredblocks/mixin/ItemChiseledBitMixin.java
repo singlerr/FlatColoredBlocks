@@ -1,10 +1,10 @@
 package mod.flatcoloredblocks.mixin;
 
 import mod.chiselsandbits.chiseledblock.BlockBitInfo;
+import mod.chiselsandbits.core.Log;
 import mod.chiselsandbits.helpers.DeprecationHelper;
 import mod.chiselsandbits.helpers.ModUtil;
 import mod.chiselsandbits.items.ItemChiseledBit;
-import mod.flatcoloredblocks.Log;
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import mod.flatcoloredblocks.block.ItemBlockFlatColored;
 import net.minecraft.block.Block;
@@ -13,18 +13,28 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.Property;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Mixin(ItemChiseledBit.class)
 public class ItemChiseledBitMixin {
+    /**
+     * @author singlerr
+     * @reason unable to inject code to this method, overwriting codes almost copied from github repository
+     */
     @Overwrite(remap = false)
     public static ITextComponent getBitStateName(BlockState state) {
         ItemStack target = null;
