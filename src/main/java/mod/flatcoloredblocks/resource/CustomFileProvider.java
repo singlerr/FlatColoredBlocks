@@ -1,17 +1,18 @@
 package mod.flatcoloredblocks.resource;
 
 import com.google.gson.JsonObject;
+import mod.flatcoloredblocks.FlatColoredBlocks;
+import net.minecraft.resources.ResourcePack;
+import net.minecraft.resources.ResourcePackType;
+import net.minecraft.resources.data.IMetadataSectionSerializer;
+import net.minecraft.util.ResourceLocation;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.function.Predicate;
-import mod.flatcoloredblocks.FlatColoredBlocks;
-import net.minecraft.resources.ResourcePack;
-import net.minecraft.resources.ResourcePackType;
-import net.minecraft.resources.data.IMetadataSectionSerializer;
-import net.minecraft.util.ResourceLocation;
 
 public class CustomFileProvider extends ResourcePack {
 
@@ -34,7 +35,8 @@ public class CustomFileProvider extends ResourcePack {
     }
 
     @Override
-    public void close() {}
+    public void close() {
+    }
 
     @Override
     protected InputStream getInputStream(String resourcePath) throws IOException {

@@ -1,9 +1,6 @@
 package mod.flatcoloredblocks.craftingitem;
 
 import com.google.common.base.Stopwatch;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.gui.ModGuiTypes;
 import net.minecraft.client.util.ITooltipFlag;
@@ -20,6 +17,10 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ItemColoredBlockCrafter extends Item {
 

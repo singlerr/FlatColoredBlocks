@@ -1,10 +1,11 @@
 package mod.flatcoloredblocks.craftingitem;
 
+import mod.flatcoloredblocks.block.EnumFlatBlockType;
+import net.minecraft.item.DyeColor;
+
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import mod.flatcoloredblocks.block.EnumFlatBlockType;
-import net.minecraft.item.DyeColor;
 
 /**
  * Stores the result of analsis of a player's inventory.

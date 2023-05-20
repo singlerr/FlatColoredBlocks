@@ -1,6 +1,5 @@
 package mod.flatcoloredblocks.craftingitem;
 
-import java.util.*;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.ModUtil;
 import mod.flatcoloredblocks.block.BlockFlatColored;
@@ -21,6 +20,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+
+import java.util.*;
 
 // TODO: FlatColoredBlockRecipe is not registered with anything.
 

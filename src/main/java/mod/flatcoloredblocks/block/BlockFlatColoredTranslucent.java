@@ -38,7 +38,7 @@ public class BlockFlatColoredTranslucent extends BlockFlatColored {
     @Override
     public float[] getBeaconColorMultiplier(BlockState state, IWorldReader world, BlockPos pos, BlockPos beaconPos) {
         int o = ConversionHSV2RGB.toRGB(hsvFromState(state));
-        return new float[] {byteToFloat((o >> 16) & 0xff), byteToFloat((o >> 8) & 0xff), byteToFloat((o) & 0xff)};
+        return new float[]{byteToFloat((o >> 16) & 0xff), byteToFloat((o >> 8) & 0xff), byteToFloat((o) & 0xff)};
     }
 
     private float byteToFloat(int i) {

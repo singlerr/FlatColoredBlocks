@@ -1,7 +1,5 @@
 package mod.flatcoloredblocks.gui;
 
-import java.lang.reflect.Constructor;
-import javax.annotation.Nullable;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.craftingitem.ContainerColoredBlockCrafter;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,6 +11,9 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+
+import javax.annotation.Nullable;
+import java.lang.reflect.Constructor;
 
 /**
  * Registry of Guis

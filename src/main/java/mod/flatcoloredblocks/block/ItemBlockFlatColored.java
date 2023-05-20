@@ -1,8 +1,5 @@
 package mod.flatcoloredblocks.block;
 
-import java.util.List;
-import java.util.Set;
-import javax.annotation.Nonnull;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.ModUtil;
 import net.minecraft.block.Block;
@@ -15,6 +12,10 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Set;
 
 public class ItemBlockFlatColored extends BlockItem {
 

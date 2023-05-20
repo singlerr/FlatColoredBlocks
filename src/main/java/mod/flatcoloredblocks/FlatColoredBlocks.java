@@ -1,8 +1,5 @@
 package mod.flatcoloredblocks;
 
-import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import mod.flatcoloredblocks.block.BlockHSVConfiguration;
 import mod.flatcoloredblocks.block.EnumFlatBlockType;
@@ -12,6 +9,7 @@ import mod.flatcoloredblocks.config.ModConfig;
 import mod.flatcoloredblocks.craftingitem.ItemColoredBlockCrafter;
 import mod.flatcoloredblocks.network.NetworkRouter;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
@@ -25,6 +23,10 @@ import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.IForgeRegistry;
+
+import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 @Mod(FlatColoredBlocks.MODID)
 public class FlatColoredBlocks {
@@ -94,12 +96,11 @@ public class FlatColoredBlocks {
     }
 
     public void blocks(IForgeRegistry<Block> registry) {
-        final BlockHSVConfiguration[] configs = new BlockHSVConfiguration[] {
-            FlatColoredBlocks.instance.normal,
-            FlatColoredBlocks.instance.transparent,
-            FlatColoredBlocks.instance.glowing
+        final BlockHSVConfiguration[] configs = new BlockHSVConfiguration[]{
+                FlatColoredBlocks.instance.normal,
+                FlatColoredBlocks.instance.transparent,
+                FlatColoredBlocks.instance.glowing
         };
-
         // any time we regenerate blocks we regenerate this.
         itemBlocks.clear();
 
@@ -108,6 +109,11 @@ public class FlatColoredBlocks {
             for (int v = 0; v < hsvconfig.MAX_SHADE_VARIANT; ++v) {
                 final BlockFlatColored cb = BlockFlatColored.construct(hsvconfig, v);
                 registry.register(cb);
+                //Support for Chisels and bits - registering block states
+
+                for (BlockState validState : cb.getStateContainer().getValidStates()) {
+                    Block.BLOCK_STATE_IDS.add(validState);
+                }
 
                 final ItemBlockFlatColored cbi = new ItemBlockFlatColored(cb);
                 itemBlocks.add(cbi);

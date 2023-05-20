@@ -1,8 +1,9 @@
 package mod.flatcoloredblocks.block;
 
-import java.util.Set;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.item.DyeColor;
+
+import java.util.Set;
 
 public enum EnumFlatColorAttributes {
     // non-colors

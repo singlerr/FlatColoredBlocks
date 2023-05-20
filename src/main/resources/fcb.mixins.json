@@ -2,10 +2,12 @@
   "compatibilityLevel": "JAVA_8",
   "package": "mod.flatcoloredblocks.mixin",
   "refmap": "fcb.refmap.json",
-  "mixins": [],
   "client": [
+    "DeprecationHelperMixin",
     "ReloadableResourceManagerMixin",
-    "TagRegistryMixin"
+    "TagRegistryMixin",
+    "ItemChiseledBitMixin",
+    "ModUtilMixin"
   ],
   "minVersion": "0.8"
 }

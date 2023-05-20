@@ -1,10 +1,11 @@
 package mod.flatcoloredblocks.network;
 
-import java.io.IOException;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
+
+import java.io.IOException;
 
 /**
  * Base Packet to be implemented.

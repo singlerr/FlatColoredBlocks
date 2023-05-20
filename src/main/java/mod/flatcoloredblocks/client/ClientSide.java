@@ -1,7 +1,5 @@
 package mod.flatcoloredblocks.client;
 
-import java.util.function.Predicate;
-import javax.annotation.Nonnull;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.ModUtil;
 import mod.flatcoloredblocks.block.BlockFlatColored;
@@ -24,13 +22,17 @@ import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 
+import javax.annotation.Nonnull;
+import java.util.function.Predicate;
+
 public class ClientSide {
 
     public static final ClientSide instance = new ClientSide();
 
     public ResourceGenerator resourceGenerator = new ResourceGenerator();
 
-    private ClientSide() {}
+    private ClientSide() {
+    }
 
     public void preinit() {
         resourceGenerator.init();

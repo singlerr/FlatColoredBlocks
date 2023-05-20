@@ -1,8 +1,5 @@
 package mod.flatcoloredblocks.mixin;
 
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import mod.flatcoloredblocks.client.ClientSide;
 import mod.flatcoloredblocks.resource.CustomResourceInjector;
 import net.minecraft.resources.IAsyncReloader;
@@ -17,6 +14,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @Mixin(SimpleReloadableResourceManager.class)
 public abstract class ReloadableResourceManagerMixin {

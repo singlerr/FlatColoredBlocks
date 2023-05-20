@@ -5,7 +5,8 @@ import org.apache.logging.log4j.Logger;
 
 public class Log {
 
-    private Log() {}
+    private Log() {
+    }
 
     private static Logger getLogger() {
         return LogManager.getLogger(FlatColoredBlocks.MODID);

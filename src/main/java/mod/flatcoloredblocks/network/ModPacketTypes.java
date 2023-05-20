@@ -1,7 +1,8 @@
 package mod.flatcoloredblocks.network;
 
-import java.util.HashMap;
 import mod.flatcoloredblocks.network.packets.ScrolingGuiPacket;
+
+import java.util.HashMap;
 
 /**
  * Registry of Packets that can be sent and recieved.

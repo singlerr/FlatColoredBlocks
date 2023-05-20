@@ -1,7 +1,8 @@
 package mod.flatcoloredblocks.config;
 
-import java.io.File;
 import net.minecraftforge.common.MinecraftForge;
+
+import java.io.File;
 
 // TODO: Loading, Managing and Saving Values
 public class ModConfig {

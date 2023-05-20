@@ -1,12 +1,13 @@
 package mod.flatcoloredblocks.gui;
 
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.world.World;
+
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 /**
  * Client / Server Gui + Container Handler

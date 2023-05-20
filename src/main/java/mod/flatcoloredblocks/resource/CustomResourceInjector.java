@@ -1,12 +1,13 @@
 package mod.flatcoloredblocks.resource;
 
-import java.util.function.Predicate;
 import mod.flatcoloredblocks.client.ClientSide;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 import net.minecraftforge.resource.VanillaResourceType;
+
+import java.util.function.Predicate;
 
 public class CustomResourceInjector implements ISelectiveResourceReloadListener {
     public static final CustomFileProvider generatedFiles = new CustomFileProvider();

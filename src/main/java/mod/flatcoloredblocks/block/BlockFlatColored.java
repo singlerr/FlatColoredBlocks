@@ -1,6 +1,5 @@
 package mod.flatcoloredblocks.block;
 
-import java.util.*;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -18,6 +17,8 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+
+import java.util.*;
 
 public class BlockFlatColored extends Block {
 
@@ -58,7 +59,6 @@ public class BlockFlatColored extends Block {
         varient = varientNum;
 
         coloredBlocks.add(this);
-        BlockState state = getDefaultState();
         this.lightValue = (int)
                 (FlatColoredBlocks.instance.config.GLOWING_EMITS_LIGHT
                         ? Math.max(0, Math.min(15, 15.0f * (lightValue / 255.0f)))

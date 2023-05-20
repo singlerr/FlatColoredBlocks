@@ -1,10 +1,11 @@
 package mod.flatcoloredblocks;
 
-import javax.annotation.Nonnull;
 import mod.flatcoloredblocks.block.BlockFlatColored;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 @SuppressWarnings("deprecation")
 public class ModUtil {

@@ -1,7 +1,5 @@
 package mod.flatcoloredblocks.craftingitem;
 
-import java.util.*;
-import java.util.Map.Entry;
 import mod.flatcoloredblocks.FlatColoredBlocks;
 import mod.flatcoloredblocks.ModUtil;
 import mod.flatcoloredblocks.block.BlockFlatColored;
@@ -19,6 +17,9 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Generates and Crafts items that are seen in the crafting item's gui.
@@ -322,7 +323,8 @@ public class InventoryColoredBlockCrafter implements IInventory {
     }
 
     @Override
-    public void setInventorySlotContents(final int index, final ItemStack stack) {}
+    public void setInventorySlotContents(final int index, final ItemStack stack) {
+    }
 
     @Override
     public int getInventoryStackLimit() {
@@ -330,7 +332,8 @@ public class InventoryColoredBlockCrafter implements IInventory {
     }
 
     @Override
-    public void markDirty() {}
+    public void markDirty() {
+    }
 
     @Override
     public boolean isUsableByPlayer(final PlayerEntity player) {
@@ -338,10 +341,12 @@ public class InventoryColoredBlockCrafter implements IInventory {
     }
 
     @Override
-    public void openInventory(final PlayerEntity player) {}
+    public void openInventory(final PlayerEntity player) {
+    }
 
     @Override
-    public void closeInventory(final PlayerEntity player) {}
+    public void closeInventory(final PlayerEntity player) {
+    }
 
     @Override
     public boolean isItemValidForSlot(final int index, final ItemStack stack) {
@@ -376,7 +381,7 @@ public class InventoryColoredBlockCrafter implements IInventory {
 
     @Override
     public boolean isEmpty() // whatever this is...
-            {
+    {
         for (final ItemStack itemstack : options) {
             if (!itemstack.isEmpty()) {
                 return false;
